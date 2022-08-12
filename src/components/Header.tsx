@@ -5,64 +5,83 @@ import {
   Menu as MenuIcon,
   Search,
   User,
+  UserPlus,
 } from "tabler-icons-react";
 import { Menu } from "@headlessui/react";
 import Link from "next/link";
-import { cloneElement } from "react";
+import { cloneElement, ReactElement, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-const NAV_LINKS = [
-  {
-    name: "Explore",
-    href: "/explore",
-    icon: <Map />,
-  },
-  {
-    name: "Add Collection",
-    href: "/profile/add-collection",
-    icon: <FilePlus />,
-  },
-  {
-    name: "Manage Profile",
-    href: "/profile/manage",
-    icon: <User />,
-  },
-  {
-    name: "Logout",
-    href: "/logout",
-    icon: <Logout />,
-  },
-];
+interface NavLinkProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}
 
 export const Header = () => {
+  const { data: session } = useSession();
+  const [navLinks, setNavLinks] = useState<NavLinkProps[]>([]);
+
+  useEffect(() => {
+    if (session) {
+      setNavLinks([
+        {
+          label: "Explore",
+          href: "/explore",
+          icon: <Map />,
+        },
+        {
+          label: "Add Collection",
+          href: "/profile/add-collection",
+          icon: <FilePlus />,
+        },
+        {
+          label: "Manage Profile",
+          href: "/profile/manage",
+          icon: <User />,
+        },
+        {
+          label: "Logout",
+          href: "/logout",
+          icon: <Logout />,
+        },
+      ] as NavLinkProps[]);
+    } else {
+      setNavLinks([
+        {
+          label: "Explore",
+          href: "/explore",
+          icon: <Map />,
+        },
+        {
+          label: "Log In",
+          href: "/api/auth/signin",
+          icon: <User />,
+        },
+        {
+          label: "Sign Up",
+          href: "/api/auth/signin",
+          icon: <UserPlus />,
+        },
+      ] as NavLinkProps[]);
+    }
+  }, [session]);
+
   return (
     <div className="bg-white flex px-5 py-3 justify-between items-center shadow-xl shadow-gray-300/25 border-b border-gray-100">
       <Menu as="div" className="relative">
-        <div>
-          <Menu.Button className="rounded-md focus:outline-purple-400">
-            <MenuIcon className="text-gray-800" />
-          </Menu.Button>
-        </div>
+        <Menu.Button className="rounded-md focus:outline-purple-400 flex items-center">
+          <MenuIcon className="text-gray-800" />
+        </Menu.Button>
 
-        <Menu.Items className="absolute top-11 divide-y divide-gray-100 rounded-md bg-white focus:outline-none border border-gray-100 shadow-lg shadow-gray-300/50">
-          {NAV_LINKS.map(({ name, href, icon }, index) => (
+        <Menu.Items className="absolute top-11 divide-y divide-gray-100 rounded-md bg-white focus:outline-none border border-gray-100 shadow-lg shadow-gray-300/50 w-max">
+          {navLinks.map(({ label, href, icon }, index) => (
             <Menu.Item key={index}>
-              <NavLink href={href} label={name} icon={icon} />
+              <NavLink href={href} label={label} icon={icon} />
             </Menu.Item>
           ))}
         </Menu.Items>
       </Menu>
-
-      {/* <Popover className="relative"> */}
-      {/*   <Popover.Button className="flex items-center"> */}
-      {/*     <Menu className="text-gray-800" /> */}
-      {/*   </Popover.Button> */}
-
-      {/*   <Popover.Panel className="absolute z-10 flex flex-col bg-white shadow-md w-max py-2 border border-gray-200 rounded-md"> */}
-      {/*     {NAV_LINKS.map(({ name, href, icon }) => ( */}
-      {/*       <NavLink key={name} href={href} icon={icon} label={name} /> */}
-      {/*     ))} */}
-      {/*   </Popover.Panel> */}
-      {/* </Popover> */}
 
       <div className="w-24">
         <svg viewBox="0 0 90 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -76,21 +95,20 @@ export const Header = () => {
           />
         </svg>
       </div>
-      <Search className="text-gray-800" />
+      <Link href="/search">
+        <Search className="text-gray-800" />
+      </Link>
     </div>
   );
 };
 
-interface NavLinkProps {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-}
-
 const NavLink = ({ href, icon, label }: NavLinkProps) => (
   <Link href={href}>
     <a className="flex items-center text-gray-900 hover:text-gray-700 py-2 px-4 gap-2">
-      {cloneElement(icon, { className: "", size: 20 })}
+      {cloneElement(icon as ReactElement, {
+        className: "text-gray-400",
+        size: 20,
+      })}
       {label}
     </a>
   </Link>
