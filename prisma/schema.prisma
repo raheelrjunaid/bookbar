@@ -42,6 +42,7 @@ model User {
   email                String?      @unique
   emailVerified        DateTime?
   image                String?
+  slug                 String?      @unique // Potential bug
   accounts             Account[]
   sessions             Session[]
   collections          Collection[]

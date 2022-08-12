@@ -16,6 +16,18 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async signIn({ user }) {
+      if (!user.id) {
+        const updatedUser = await prisma.user.update({
+          where: { id: newUser },
+          data: {
+            slug: user.name.toLowerCase().replace(/\s/g, "-"),
+          },
+        });
+        return updatedUser;
+      }
+      return true;
+    },
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
@@ -27,6 +39,15 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      profile({ sub, name, email, picture }) {
+        return {
+          id: sub,
+          name,
+          email,
+          image: picture,
+          slug: name.toLowerCase().replace(/\s/g, "-"),
+        };
+      },
     }),
   ],
   debug: env.NODE_ENV === "development",

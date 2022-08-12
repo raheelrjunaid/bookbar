@@ -16,7 +16,9 @@ const MyApp: AppType = ({
     <SessionProvider session={session}>
       <div className="min-h-screen min-w-screen grid grid-rows-[auto_1fr_auto]">
         <Header />
-        <Component {...pageProps} />
+        <main className="container py-14">
+          <Component {...pageProps} />
+        </main>
         <Footer />
       </div>
     </SessionProvider>

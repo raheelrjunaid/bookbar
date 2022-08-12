@@ -42,7 +42,7 @@ export const Header = () => {
         },
         {
           label: "Logout",
-          href: "/logout",
+          href: "/api/auth/signout",
           icon: <Logout />,
         },
       ] as NavLinkProps[]);
