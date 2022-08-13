@@ -111,7 +111,7 @@ export const Header = () => {
 
 const NavLink = ({ href, icon, label }: NavLinkProps) => (
   <Link href={href}>
-    <a className="flex items-center text-gray-900 hover:text-gray-700 py-2 px-4 gap-2">
+    <a className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2">
       {cloneElement(icon as ReactElement, {
         className: "text-gray-400",
         size: 20,
