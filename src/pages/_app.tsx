@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const MyApp: AppType = ({
   Component,
@@ -16,11 +17,12 @@ const MyApp: AppType = ({
     <SessionProvider session={session}>
       <div className="min-h-screen min-w-screen grid grid-rows-[auto_1fr_auto]">
         <Header />
-        <main className="container py-14">
+        <main className="container">
           <Component {...pageProps} />
         </main>
         <Footer />
       </div>
+      <ReactQueryDevtools initialIsOpen={false} />
     </SessionProvider>
   );
 };
