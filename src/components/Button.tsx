@@ -1,5 +1,4 @@
-import classNames from "classnames";
-import React from "react";
+import React, { cloneElement, ReactElement } from "react";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -24,20 +23,22 @@ export const Button = ({
 }: ButtonProps) => (
   <button
     {...props}
-    className={classNames({
-      "font-medium py-2 px-4 flex gap-2 items-center": true,
-      "bg-purple-600 text-white": variant === "primary",
-      "text-gray-800 border border-gray-800": variant === "outline",
-      "text-gray-700": variant === "subtle",
-      ["text-" + size]: size !== "base",
-      "py-3 px-5": size === "lg",
-      "py-1 px-2": compact || size === "sm",
-      className: true,
-    })}
+    className={`
+        ${"font-medium py-2 px-4 flex gap-2 items-center"}
+        ${variant === "primary" && "bg-purple-600 text-white"}
+        ${variant === "outline" && "text-gray-800 border border-gray-800"}
+        ${size === "lg" ? "py-3 px-5 text-lg" : "text-sm"}
+        ${compact || (size === "sm" && "py-1 px-2")}
+        ${className}
+    `}
   >
-    {leftIcon}
+    {leftIcon &&
+      cloneElement(leftIcon as ReactElement, { size: size === "sm" ? 20 : 22 })}
     {children}
-    {rightIcon}
+    {rightIcon &&
+      cloneElement(rightIcon as ReactElement, {
+        size: size === "sm" ? 20 : 22,
+      })}
   </button>
 );
 
