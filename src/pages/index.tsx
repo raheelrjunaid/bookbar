@@ -1,14 +1,14 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Button from "../components/Button";
 import Divider from "../components/Divider";
 import { Plus } from "tabler-icons-react";
 import Link from "next/link";
 
 const Home: NextPage = () => {
-  const { data, isLoading, isError } = trpc.useQuery(["collection.getAll"]);
+  const { data } = trpc.useQuery(["collection.getAll"]);
   const { status } = useSession();
 
   console.log(data);
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         <title>BookBar | Explore</title>
       </Head>
 
-      <section className="flex flex-col gap-6">
+      <section className="flex flex-col gap-6 pt-14">
         <div className="flex flex-col gap-2">
           <h1 className="font-serif text-4xl text-gray-900">
             Explore Popular Collections
@@ -38,12 +38,12 @@ const Home: NextPage = () => {
         )}
       </section>
 
-      <Divider margin={8} />
+      <Divider className="my-8" />
 
       <section className="grid grid-cols-1 gap-4"></section>
 
       <section className="pt-10 flex justify-center">
-        <Link href="/profile/add-collection">
+        <Link href="/collection/add">
           <Button size="lg" rightIcon={<Plus />}>
             Add Collection
           </Button>

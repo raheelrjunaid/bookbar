@@ -3,3 +3,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  input[type="text"],
+  textarea {
+    @apply focus:border-purple-500 focus:ring-purple-500 focus:outline-none transition;
+  }
+}
