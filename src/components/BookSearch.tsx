@@ -50,7 +50,7 @@ export const BookSearch = ({
         <Combobox.Button className="absolute inset-y-0 left-2.5 peer-focus:text-purple-500 text-gray-400">
           <Search aria-hidden="true" size={22} />
         </Combobox.Button>
-        <Combobox.Options className="absolute mt-1 w-full overflow-hidden rounded-md shadow-lg shadow-gray-300/50 border border-gray-200">
+        <Combobox.Options className="bg-white absolute mt-1 w-full overflow-hidden rounded-md shadow-lg shadow-gray-300/50 border border-gray-200">
           {isLoading || !data ? (
             <div className="py-2 px-4 bg-gray-100">Loading...</div>
           ) : (
