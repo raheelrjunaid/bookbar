@@ -10,3 +10,7 @@
     @apply focus:border-purple-500 focus:ring-purple-500 focus:outline-none transition;
   }
 }
+
+svg.star-svg {
+  display: inline;
+}

@@ -16,6 +16,10 @@ export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["books.google.com"],
+    domains: [
+      "books.google.com",
+      "cloudflare-ipfs.com",
+      "lh3.googleusercontent.com",
+    ],
   },
 });

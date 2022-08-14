@@ -6,12 +6,11 @@ import Button from "../components/Button";
 import Divider from "../components/Divider";
 import { Plus } from "tabler-icons-react";
 import Link from "next/link";
+import { CollectionCard } from "../components/CollectionCard";
 
 const Home: NextPage = () => {
-  const { data } = trpc.useQuery(["collection.getAll"]);
-  const { status } = useSession();
-
-  console.log(data);
+  const { data: collectionData } = trpc.useQuery(["collection.getAll"]);
+  const { data: session } = useSession();
 
   return (
     <>
@@ -28,7 +27,7 @@ const Home: NextPage = () => {
             Get the best book recommendations from actual people!
           </p>
         </div>
-        {status === "unauthenticated" && (
+        {!session && (
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={() => signIn()}>
               Log In
@@ -40,7 +39,19 @@ const Home: NextPage = () => {
 
       <Divider className="my-8" />
 
-      <section className="grid grid-cols-1 gap-4"></section>
+      {collectionData && (
+        <section className="grid grid-cols-1 gap-4">
+          {collectionData.map(({ id, title, user, books, rating }) => (
+            <CollectionCard
+              key={id}
+              collectionId={id}
+              title={title}
+              user={user}
+              bookCovers={books.map(({ cover }) => cover)}
+            />
+          ))}
+        </section>
+      )}
 
       <section className="pt-10 flex justify-center">
         <Link href="/collection/add">

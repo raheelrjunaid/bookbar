@@ -27,13 +27,15 @@ export const Button = ({
         ${"font-medium py-2 px-4 flex gap-2 items-center"}
         ${variant === "primary" && "bg-purple-600 text-white"}
         ${variant === "outline" && "text-gray-800 border border-gray-800"}
-        ${size === "lg" ? "py-3 px-5 text-lg" : "text-sm"}
+        ${size === "lg" && "py-3 px-5 text-lg"}
         ${compact || (size === "sm" && "py-1 px-2")}
         ${className}
     `}
   >
     {leftIcon &&
-      cloneElement(leftIcon as ReactElement, { size: size === "sm" ? 20 : 22 })}
+      cloneElement(leftIcon as ReactElement, {
+        size: size === "sm" ? 20 : 22,
+      })}
     {children}
     {rightIcon &&
       cloneElement(rightIcon as ReactElement, {
