@@ -2,7 +2,7 @@ export default interface BookProps {
   id: string;
   cover: string;
   title: string;
-  authors: string[];
+  authors: string;
   avgRating: number;
   link: string;
   description: string;
