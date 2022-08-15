@@ -65,15 +65,19 @@ async function main() {
   );
   const books = bookQueries.flat();
 
-  await Promise.all(
+  return await Promise.all(
     Array.from({ length: 30 }, async (_) => {
       const title = faker.lorem.sentence();
       const description = faker.lorem.paragraph();
-      const randomUser = users[Math.floor(Math.random() * users.length)];
-      if (!randomUser) throw new Error("randomUser is not defined");
-      const randomBooks = Array.from({ length: 13 }, (_) => {
-        return books[Math.floor(Math.random() * books.length)];
-      });
+      const randomUsers = Array.from(
+        { length: 10 },
+        () => users[Math.floor(Math.random() * users.length)]
+      ) as { id: string }[];
+      const randomBooks = Array.from(
+        { length: 13 },
+        (_) => books[Math.floor(Math.random() * books.length)]
+      );
+      const collectionAuthor = randomUsers[0] as { id: string };
 
       await prisma.book.createMany({
         data: randomBooks.map((book) => ({
@@ -83,18 +87,18 @@ async function main() {
           cover: book.volumeInfo.imageLinks?.thumbnail,
           link: book.volumeInfo.canonicalVolumeLink,
           authors: book.volumeInfo.authors?.join(", "),
-          avgRating: book.volumeInfo?.avgRating,
+          avgRating: book.volumeInfo?.averageRating,
         })),
         skipDuplicates: true,
       });
 
-      await prisma.collection.create({
+      const collection = await prisma.collection.create({
         data: {
           title,
           description,
           user: {
             connect: {
-              id: randomUser.id,
+              id: collectionAuthor.id,
             },
           },
           books: {
@@ -104,6 +108,18 @@ async function main() {
         select: {
           id: true,
         },
+      });
+
+      await prisma.rating.createMany({
+        data: randomUsers.splice(1).map((user) => ({
+          userId: user.id,
+          collectionId: collection.id,
+          rating: faker.datatype.number({
+            min: 0.5,
+            max: 5,
+          }),
+        })),
+        skipDuplicates: true,
       });
     })
   );
