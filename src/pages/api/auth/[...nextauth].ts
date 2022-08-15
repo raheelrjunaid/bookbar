@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 import { env } from "../../../env/server.mjs";
+import slugify from "slugify";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -15,18 +16,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = user.id;
       }
       return session;
-    },
-    async signIn({ user }) {
-      if (!user.id) {
-        const updatedUser = await prisma.user.update({
-          where: { id: newUser },
-          data: {
-            slug: user.name.toLowerCase().replace(/\s/g, "-"),
-          },
-        });
-        return updatedUser;
-      }
-      return true;
     },
   },
   // Configure one or more authentication providers
@@ -45,7 +34,7 @@ export const authOptions: NextAuthOptions = {
           name,
           email,
           image: picture,
-          slug: name.toLowerCase().replace(/\s/g, "-"),
+          slug: slugify(name, { lower: true }),
         };
       },
     }),

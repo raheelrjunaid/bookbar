@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import axios from "axios";
 import { faker } from "@faker-js/faker";
+import slugify from "slugify";
 
 async function main() {
   if (!prisma) throw new Error("prisma is not defined");
@@ -33,7 +34,7 @@ async function main() {
         email: faker.internet.email(),
         name,
         image: faker.image.avatar(),
-        slug: name.replace(/\s+/g, "-").toLowerCase(),
+        slug: slugify(name, { lower: true }),
       };
     }),
   });
