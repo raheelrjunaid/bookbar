@@ -34,22 +34,24 @@ model Book {
   description String?      @db.Text
   cover       String?
   avgRating   Float?
-  link        String?
+  link        String
   collections Collection[]
 }
 
 model Rating {
   id           String     @id @default(cuid())
   rating       Float
-  user         User       @relation(fields: [userId], references: [id])
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId String
+
+  @@unique([userId, collectionId])
 }
 
 model User {
   id                   String       @id @default(cuid())
-  name                 String
+  name                 String?
   email                String       @unique
   emailVerified        DateTime?
   image                String?
