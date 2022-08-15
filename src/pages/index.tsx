@@ -10,7 +10,7 @@ import { CollectionCard } from "../components/CollectionCard";
 
 const Home: NextPage = () => {
   const { data: collectionData } = trpc.useQuery(["collection.getAll"]);
-  const { data: session } = useSession();
+  const { status: sessionStatus } = useSession();
 
   return (
     <>
@@ -27,7 +27,7 @@ const Home: NextPage = () => {
             Get the best book recommendations from actual people!
           </p>
         </div>
-        {!session && (
+        {sessionStatus === "unauthenticated" && (
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={() => signIn()}>
               Log In
@@ -41,7 +41,7 @@ const Home: NextPage = () => {
 
       {collectionData && (
         <section className="grid grid-cols-1 gap-4">
-          {collectionData.map(({ id, title, user, books, rating }) => (
+          {collectionData.map(({ id, title, user, books }) => (
             <CollectionCard
               key={id}
               collectionId={id}
