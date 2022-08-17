@@ -16,5 +16,10 @@ export async function middleware(req: NextApiRequest) {
 }
 
 export const config = {
-  matcher: ["/user/manage", "/verify-email", "/collection/add"],
+  matcher: [
+    "/user/manage",
+    "/auth/verify-email",
+    "/collection/add",
+    "/auth/new-user",
+  ],
 };

@@ -18,8 +18,9 @@ export default defineNextConfig({
   images: {
     domains: [
       "books.google.com",
-      "cloudflare-ipfs.com",
-      "lh3.googleusercontent.com",
+      "cloudflare-ipfs.com", // Faker js
+      "lh3.googleusercontent.com", // Google profile pic
+      "res.cloudinary.com", // Cloudinary profile pic
     ],
   },
 });

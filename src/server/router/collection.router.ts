@@ -58,11 +58,6 @@ export const collectionRouter = createRouter()
         where: {
           slug: input.userSlug,
         },
-        select: {
-          id: true,
-          name: true,
-          image: true,
-        },
       });
       if (!userData) {
         throw new TRPCError({

@@ -9,6 +9,7 @@ import { Heart, HeartOff } from "tabler-icons-react";
 import { useSession } from "next-auth/react";
 import Divider from "../../components/Divider";
 import Book from "../../components/Book";
+import cloudinary from "../../utils/cloudinary";
 
 export default function Collection() {
   const router = useRouter();
@@ -94,10 +95,16 @@ export default function Collection() {
         </h1>
         <div className="flex items-center gap-3 mb-3 mt-5 justify-between">
           <div className="flex items-center gap-3">
-            <Link href={`/user/${data.user.id}`}>
+            <Link href={`/user/${data.user.slug}`}>
               <div className="flex-none w-10 aspect-square overflow-hidden rounded-full relative cursor-pointer">
                 <Image
-                  src={(data.user.image as string) || "/image-not-found"}
+                  src={
+                    data.user.image ||
+                    cloudinary
+                      .image(`bookbar/${data.user.id}-profile-image`)
+                      .toURL() ||
+                    "/image-not-found"
+                  }
                   layout="fill"
                   objectPosition="center"
                   objectFit="cover"

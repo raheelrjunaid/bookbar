@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Trash } from "tabler-icons-react";
 import Highlighter from "react-highlight-words";
+import cloudinary from "../utils/cloudinary";
 
 interface CollectionCardProps {
   bookCovers: (string | null)[];
@@ -18,6 +19,7 @@ interface CollectionCardProps {
     id: string;
     name: string;
     image: string | null;
+    slug: string;
   };
   collectionId: string;
   handleRemove: () => void;
@@ -88,10 +90,16 @@ export const CollectionCard = ({
       </span>
       <div className="p-4 space-y-2">
         <div className="flex items-center gap-3">
-          <Link href={`/user/${user.id}`}>
+          <Link href={`/user/${user.slug}`}>
             <div className="flex-none w-10 aspect-square overflow-hidden rounded-full relative cursor-pointer">
               <Image
-                src={(user.image as string) || "/image-not-found"}
+                src={
+                  user.image ||
+                  cloudinary
+                    .image(`bookbar/${user.id}-profile-image`)
+                    .toURL() ||
+                  "/image-not-found"
+                }
                 layout="fill"
                 objectPosition="center"
                 objectFit="cover"

@@ -1,9 +1,17 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { prisma } from "../db/client";
 import { createProtectedRouter } from "./protected-router";
 import transporter from "../../utils/transporter";
 import { faker } from "@faker-js/faker";
+import slugify from "slugify";
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+] as const;
+
+import { v2 as cloudinary } from "cloudinary";
 
 export const userRouter = createProtectedRouter()
   .query("getUser", {
@@ -16,12 +24,46 @@ export const userRouter = createProtectedRouter()
   })
   .mutation("updateProfile", {
     input: z.object({
+      image: z
+        .object({
+          type: z.enum(ACCEPTED_IMAGE_TYPES),
+          size: z.number().max(1000000),
+          bytes: z.string(),
+        })
+        .nullish(),
       name: z.string().nullish(),
       email: z.string().nullish(),
     }),
     async resolve({ ctx: { prisma, session }, input }) {
       // Send verification email
-      const { email: newEmail, name: newName } = input;
+      const { email: newEmail, name: newName, image: newImage } = input;
+      if (!newEmail && !newName && !newImage)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No fields to update.",
+        });
+
+      if (newImage) {
+        await cloudinary.uploader.upload(
+          newImage.bytes,
+          {
+            moderation: "webpurify",
+            folder: "bookbar",
+            public_id: `${session.user.id}-profile-image`,
+            invalidate: true,
+          },
+          async (error) => {
+            if (error) {
+              console.error(error);
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: error.message,
+              });
+            }
+          }
+        );
+      }
+
       if (newEmail) {
         const existingUser = await prisma.user.findUnique({
           where: { email: newEmail },
@@ -72,7 +114,7 @@ export const userRouter = createProtectedRouter()
       if (newName) {
         await prisma.user.update({
           where: { id: session.user.id },
-          data: { name: newName },
+          data: { name: newName, slug: slugify(newName, { lower: true }) },
         });
       }
     },

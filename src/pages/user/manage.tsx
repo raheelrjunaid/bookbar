@@ -9,7 +9,6 @@ import Link from "next/link";
 import Divider from "../../components/Divider";
 import { CollectionCard } from "../../components/CollectionCard";
 import { Popover } from "@headlessui/react";
-import ClientOnlyPortal from "../../components/ClientOnlyPortal";
 
 export const Manage: NextPage = () => {
   const {
