@@ -1,4 +1,5 @@
 import React, { cloneElement, ReactElement } from "react";
+import { Oval } from "react-loader-spinner";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface ButtonProps {
   compact?: boolean;
   size?: "sm" | "base" | "lg";
   className?: string;
+  loading?: boolean;
   [key: string]: any;
 }
 
@@ -19,16 +21,20 @@ export const Button = ({
   compact = false,
   size = "base",
   className,
+  loading,
   ...props
 }: ButtonProps) => (
   <button
     {...props}
     className={`
-        ${"font-medium py-2 px-4 flex gap-2 items-center"}
+        font-medium py-2 px-4 flex gap-2 items-center justify-center
         ${variant === "primary" && "bg-purple-600 text-white"}
         ${variant === "outline" && "text-gray-800 border border-gray-800"}
+        ${props.disabled && "cursor-not-allowed opacity-60 saturate-0"}
+        ${loading && "cursor-not-allowed opacity-60"}
         ${size === "lg" && "py-3 px-5 text-lg"}
-        ${compact || (size === "sm" && "py-1 px-2")}
+        ${size === "sm" && "text-sm"}
+        ${(compact || size === "sm") && "py-1 px-2"}
         ${className}
     `}
   >
@@ -37,10 +43,21 @@ export const Button = ({
         size: size === "sm" ? 20 : 22,
       })}
     {children}
-    {rightIcon &&
+    {loading ? (
+      <Oval
+        height={22}
+        width={22}
+        color="#fff"
+        secondaryColor="#eee"
+        ariaLabel="oval-loading"
+        strokeWidth={6}
+      />
+    ) : (
+      rightIcon &&
       cloneElement(rightIcon as ReactElement, {
         size: size === "sm" ? 20 : 22,
-      })}
+      })
+    )}
   </button>
 );
 

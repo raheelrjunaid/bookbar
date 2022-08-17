@@ -5,11 +5,24 @@ import { Search } from "tabler-icons-react";
 import { useQuery } from "react-query";
 import debounce from "just-debounce-it";
 import Image from "next/image";
+import BookProps from "../types/bookProps";
+
+interface GoogleBooksAPIResult {
+  id: string;
+  volumeInfo: {
+    title: string;
+    description?: string;
+    imageLinks?: { smallThumbnail: string };
+    canonicalVolumeLink: string;
+    authors?: string[];
+    averageRating: number;
+  };
+}
 
 export const BookSearch = ({
   addToCollection,
 }: {
-  addToCollection: (id: string) => void;
+  addToCollection: (props: BookProps) => void;
 }) => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -50,26 +63,22 @@ export const BookSearch = ({
         <Combobox.Button className="absolute inset-y-0 left-2.5 peer-focus:text-purple-500 text-gray-400">
           <Search aria-hidden="true" size={22} />
         </Combobox.Button>
-        <Combobox.Options className="bg-white absolute mt-1 w-full overflow-hidden rounded-md shadow-lg shadow-gray-300/50 border border-gray-200">
+        <Combobox.Options className="bg-white absolute mt-1 w-full z-10 overflow-hidden rounded-md shadow-lg shadow-gray-300/50 border border-gray-200">
           {isLoading || !data ? (
             <div className="py-2 px-4 bg-gray-100">Loading...</div>
           ) : (
             data.items.map(
               ({
+                id,
                 volumeInfo: {
                   title,
                   description,
-                  imageLinks: { smallThumbnail },
+                  imageLinks,
+                  authors,
+                  canonicalVolumeLink,
+                  averageRating,
                 },
-                id,
-              }: {
-                id: string;
-                volumeInfo: {
-                  title: string;
-                  description: string;
-                  imageLinks: { smallThumbnail: string };
-                };
-              }) => (
+              }: GoogleBooksAPIResult) => (
                 <Combobox.Option
                   key={id}
                   className={({ active }) =>
@@ -77,14 +86,24 @@ export const BookSearch = ({
                       active && "bg-purple-600 text-white"
                     }`
                   }
-                  value={id}
+                  value={
+                    {
+                      id,
+                      title,
+                      description,
+                      authors: authors?.join(", "),
+                      avgRating: averageRating,
+                      cover: imageLinks?.smallThumbnail,
+                      link: canonicalVolumeLink,
+                    } as BookProps
+                  }
                 >
                   {({ active }) => (
                     <div className="flex items-center gap-4">
-                      {smallThumbnail && (
+                      {imageLinks?.smallThumbnail && (
                         <div className="shadow-md flex-none w-10">
                           <Image
-                            src={smallThumbnail}
+                            src={imageLinks.smallThumbnail}
                             layout="responsive"
                             width={50}
                             height={80}

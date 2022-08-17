@@ -5,9 +5,14 @@ import Rating from "./Rating";
 import Link from "next/link";
 import HeartOutline from "../../public/heart-outline.svg";
 import HeartFilled from "../../public/heart-filled.svg";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { Trash } from "tabler-icons-react";
+import Highlighter from "react-highlight-words";
 
 interface CollectionCardProps {
   bookCovers: (string | null)[];
+  searchQuery?: string;
   title: string;
   user: {
     id: string;
@@ -15,23 +20,44 @@ interface CollectionCardProps {
     image: string | null;
   };
   collectionId: string;
-  avgRating: number;
+  handleRemove: () => void;
 }
 
 export const CollectionCard = ({
   bookCovers,
+  searchQuery,
   title,
-  avgRating,
   user,
   collectionId,
+  handleRemove,
 }: CollectionCardProps) => {
+  const { data: session } = useSession();
+  const router = useRouter();
   const utils = trpc.useContext();
-  const { data: isFavourited, status: favouriteStatus } = trpc.useQuery([
-    "collection.isFavourited",
+
+  // Make sure all book covers exist
+  let newBookCovers = bookCovers.filter(
+    (cover) => typeof cover === "string"
+  ) as string[];
+  // Ensure book covers repeat to take up space (of 7 books)
+  if (bookCovers.length < 7)
+    Array.from({ length: 7 - newBookCovers.length }).forEach(
+      (_, index: number) => newBookCovers.push(newBookCovers[index] as string)
+    );
+
+  const { data: isFavourited, status: favouriteStatus } = trpc.useQuery(
+    ["collection.isFavourited", { collectionId }],
+    {
+      enabled: !!(session && session.user),
+    }
+  );
+  const { data: avgRating, isLoading: ratingLoading } = trpc.useQuery([
+    "collection.getAverageRating",
     { collectionId },
   ]);
   const favouriteMutation = trpc.useMutation(["collection.toggleFavourite"], {
-    onMutate() {
+    async onMutate() {
+      await utils.cancelQuery(["collection.isFavourited", { collectionId }]);
       utils.setQueryData(
         ["collection.isFavourited", { collectionId }],
         !isFavourited
@@ -44,11 +70,11 @@ export const CollectionCard = ({
 
   return (
     <div className="flex flex-col shadow-lg shadow-gray-200 border border-t-0 border-gray-200 relative">
-      <Marquee pauseOnHover gradientColor={[229, 231, 235]} gradientWidth={100}>
-        {bookCovers.map((cover, index) => (
+      <Marquee gradientColor={[229, 231, 235]} gradientWidth={100}>
+        {newBookCovers.map((cover, index) => (
           <div className="shadow-md flex-none w-16 h-24 relative" key={index}>
             <Image
-              src={(cover as string) || ""}
+              src={cover}
               layout="fill"
               objectFit="cover"
               objectPosition="center"
@@ -62,41 +88,80 @@ export const CollectionCard = ({
       </span>
       <div className="p-4 space-y-2">
         <div className="flex items-center gap-3">
-          <div className="flex-none w-10 aspect-square overflow-hidden rounded-full relative">
-            <Image
-              src={(user.image as string) || ""}
-              layout="fill"
-              objectPosition="center"
-              objectFit="cover"
-              alt={title}
-            />
-          </div>
+          <Link href={`/user/${user.id}`}>
+            <div className="flex-none w-10 aspect-square overflow-hidden rounded-full relative cursor-pointer">
+              <Image
+                src={(user.image as string) || "/image-not-found"}
+                layout="fill"
+                objectPosition="center"
+                objectFit="cover"
+                alt={user.name || "User"}
+              />
+            </div>
+          </Link>
           <div>
-            <h2 className="font-medium text-gray-900 line-clamp-1">{title}</h2>
-            <p className="text-gray-500 text-sm">{user.name}</p>
+            <Link href={`/collection/${collectionId}`} passHref>
+              <a className="font-medium text-gray-900 line-clamp-1 hover:underline -mb-1">
+                <Highlighter
+                  highlightClassName="bg-gradient-to-t from-yellow-200 to-yellow-100 rounded-sm border border-yellow-200"
+                  searchWords={searchQuery?.split(" ") || []}
+                  autoEscape={true}
+                  textToHighlight={title}
+                />
+              </a>
+            </Link>
+            <Link href={`/user/${user.slug}`} passHref>
+              <a className="text-gray-500 text-sm hover:underline">
+                {user.name}
+              </a>
+            </Link>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          {avgRating ? (
-            <Rating ratingValue={avgRating} />
+          {avgRating?._avg.rating ? (
+            <Rating readonly ratingValue={avgRating._avg.rating} />
+          ) : ratingLoading ? (
+            <p className="text-gray-300">Loading Ratings</p>
           ) : (
             <p className="text-gray-300">No Ratings Yet</p>
           )}
           <div className="flex items-center gap-3">
             <Link href={`/collection/${collectionId}`} passHref>
-              <a className="font-medium underline text-purple-600">View Full</a>
+              <a className="font-medium hover:underline text-purple-600">
+                View Full
+              </a>
             </Link>
-            {favouriteStatus === "success" && (
+            {!session ? (
               <Image
-                src={isFavourited ? HeartFilled : HeartOutline}
+                src={HeartOutline}
                 onClick={() => {
-                  favouriteMutation.mutate({ collectionId });
+                  router.push("/api/auth/signin");
                 }}
                 width={20}
                 height={20}
                 className="cursor-pointer"
                 alt="Favourite"
               />
+            ) : session.user?.id === user.id ? (
+              <Trash
+                className="cursor-pointer text-red-500"
+                onClick={() => {
+                  handleRemove();
+                }}
+              />
+            ) : (
+              favouriteStatus === "success" && (
+                <Image
+                  src={isFavourited ? HeartFilled : HeartOutline}
+                  onClick={() => {
+                    favouriteMutation.mutate({ collectionId });
+                  }}
+                  width={20}
+                  height={20}
+                  className="cursor-pointer"
+                  alt="Favourite"
+                />
+              )
             )}
           </div>
         </div>

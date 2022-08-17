@@ -4,23 +4,32 @@ import {
   Map,
   Menu as MenuIcon,
   Search,
+  Settings,
   User,
   UserPlus,
+  X,
 } from "tabler-icons-react";
 import { Menu } from "@headlessui/react";
 import Link from "next/link";
 import { cloneElement, ReactElement, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { trpc } from "../utils/trpc";
 
 interface NavLinkProps {
-  href: string;
+  href?: string;
   icon: React.ReactNode;
   label: string;
+  callback?: () => void;
 }
 
 export const Header = () => {
   const { data: session } = useSession();
   const [navLinks, setNavLinks] = useState<NavLinkProps[]>([]);
+  const { data: userData } = trpc.useQuery(["user.getUser"], {
+    enabled: !!session,
+  });
+  const router = useRouter();
 
   useEffect(() => {
     if (session) {
@@ -36,13 +45,18 @@ export const Header = () => {
           icon: <FilePlus />,
         },
         {
-          label: "Manage Profile",
-          href: "/user/manage",
+          label: "Profile",
+          href: `/user/${userData?.slug}`,
           icon: <User />,
         },
         {
+          label: "Settings",
+          href: "/user/manage",
+          icon: <Settings />,
+        },
+        {
           label: "Logout",
-          href: "/api/auth/signout",
+          callback: () => signOut(),
           icon: <Logout />,
         },
       ] as NavLinkProps[]);
@@ -55,36 +69,41 @@ export const Header = () => {
         },
         {
           label: "Log In",
-          href: "/api/auth/signin",
+          href: "/auth/signin/",
           icon: <User />,
         },
         {
           label: "Sign Up",
-          href: "/api/auth/signin",
+          href: "/auth/signin",
           icon: <UserPlus />,
         },
       ] as NavLinkProps[]);
     }
-  }, [session]);
+  }, [session, userData?.slug]);
 
   return (
-    <div className="bg-white flex px-5 py-3 justify-between items-center shadow-xl shadow-gray-300/25 border-b border-gray-100">
+    <div className="bg-white flex px-5 py-3 gap-5 justify-between items-center shadow-xl shadow-gray-300/25 border-b border-gray-100">
       <Menu as="div" className="relative">
-        <Menu.Button className="rounded-md focus:outline-purple-400 flex items-center">
-          <MenuIcon className="text-gray-800" />
+        <Menu.Button className="rounded-md focus:outline-purple-400 flex items-center text-gray-900">
+          {({ open }) => (!open ? <MenuIcon /> : <X />)}
         </Menu.Button>
 
-        <Menu.Items className="absolute top-11 divide-y divide-gray-100 rounded-md bg-white focus:outline-none border border-gray-100 shadow-lg shadow-gray-300/50 w-max">
-          {navLinks.map(({ label, href, icon }, index) => (
+        <Menu.Items className="absolute z-10 top-11 divide-y divide-gray-100 rounded-md bg-white focus:outline-none border border-gray-100 shadow-lg shadow-gray-300/50 w-max">
+          {navLinks.map(({ label, href, icon, callback }, index) => (
             <Menu.Item key={index}>
-              <NavLink href={href} label={label} icon={icon} />
+              <NavLink
+                href={href}
+                label={label}
+                icon={icon}
+                callback={callback}
+              />
             </Menu.Item>
           ))}
         </Menu.Items>
       </Menu>
 
       <Link href="/">
-        <div className="w-24">
+        <div className="w-24 flex-none">
           <svg
             viewBox="0 0 90 30"
             fill="none"
@@ -101,17 +120,42 @@ export const Header = () => {
           </svg>
         </div>
       </Link>
-
-      <Link href="/search">
-        <Search className="text-gray-800" />
-      </Link>
+      {router.pathname.startsWith("/search") ? (
+        <div className="flex items-center justify-between relative flex-shrink">
+          <input
+            type="text"
+            className="border-b border-0 transition border-gray-600 py-1  pl-8 focus:ring-0 peer w-full"
+            placeholder="Search"
+            value={router.query.q ?? ""}
+            onChange={(e) => {
+              router.push(
+                `/search?q=${encodeURIComponent(e.target.value)}`,
+                `/search?q=${encodeURIComponent(e.target.value)}`,
+                {
+                  shallow: true,
+                }
+              );
+            }}
+          />
+          <div className="absolute flex transition items-center peer-focus:text-purple-500 text-gray-900">
+            <Search aria-hidden="true" size={22} />
+          </div>
+        </div>
+      ) : (
+        <Link href="/search">
+          <Search className="text-gray-800" />
+        </Link>
+      )}
     </div>
   );
 };
 
-const NavLink = ({ href, icon, label }: NavLinkProps) => (
-  <Link href={href}>
-    <a className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2">
+const NavLink = ({ href, icon, label, callback }: NavLinkProps) => (
+  <Link href={href || ""} passHref>
+    <a
+      className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2"
+      onClick={callback}
+    >
       {cloneElement(icon as ReactElement, {
         className: "text-gray-400",
         size: 20,

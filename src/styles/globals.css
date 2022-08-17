@@ -6,6 +6,7 @@
 
 @layer base {
   input[type="text"],
+  input[type="email"],
   textarea {
     @apply focus:border-purple-500 focus:ring-purple-500 focus:outline-none transition;
   }

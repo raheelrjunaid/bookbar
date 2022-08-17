@@ -11,6 +11,21 @@ import { CollectionCard } from "../components/CollectionCard";
 const Home: NextPage = () => {
   const { data: collectionData } = trpc.useQuery(["collection.getAll"]);
   const { status: sessionStatus } = useSession();
+  const utils = trpc.useContext();
+  const deleteCollectionMutation = trpc.useMutation(["collection.delete"], {
+    async onMutate(deletedCollection) {
+      await utils.cancelQuery(["collection.getAll"]);
+      utils.setQueryData(["collection.getAll"], (oldData: any) => {
+        if (!oldData) return;
+        return oldData.filter(
+          ({ id }: { id: string }) => id !== deletedCollection.id
+        );
+      });
+    },
+    onSettled() {
+      utils.invalidateQueries(["collection.getAll"]);
+    },
+  });
 
   return (
     <>
@@ -32,12 +47,12 @@ const Home: NextPage = () => {
             <Button variant="outline" onClick={() => signIn()}>
               Log In
             </Button>
-            <Button onClick={() => signIn()}>Sign In</Button>
+            <Button onClick={() => signIn()}>Sign Up</Button>
           </div>
         )}
       </section>
 
-      <Divider className="my-8" />
+      <Divider />
 
       {collectionData && (
         <section className="grid grid-cols-1 gap-4">
@@ -48,6 +63,7 @@ const Home: NextPage = () => {
               title={title}
               user={user}
               bookCovers={books.map(({ cover }) => cover)}
+              handleRemove={() => deleteCollectionMutation.mutate({ id })}
             />
           ))}
         </section>

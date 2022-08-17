@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["referentialIntegrity", "fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -20,11 +20,15 @@ model Collection {
   description  String?  @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
   ratings      Rating[]
   favouritedBy User[]   @relation("FavouriteCollections")
   books        Book[]
+
+  @@fulltext([description])
+  @@fulltext([title])
+  @@fulltext([description, title])
 }
 
 model Book {
