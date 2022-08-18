@@ -51,7 +51,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>BookBar | Explore</title>
+        <title>Explore | BookBar</title>
       </Head>
 
       <section className="flex flex-col gap-6 pt-14">

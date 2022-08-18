@@ -11,6 +11,7 @@ import Divider from "../../components/Divider";
 import Book from "../../components/Book";
 import cloudinary from "../../utils/cloudinary";
 import Alert from "../../components/Alert";
+import Head from "next/head";
 
 export default function Collection() {
   const router = useRouter();
@@ -75,6 +76,9 @@ export default function Collection() {
   if (isLoading)
     return (
       <>
+        <Head>
+          <title>Loading collection...</title>
+        </Head>
         <div className="h-10 w-full bg-gray-200 animate-pulse mt-14 mb-3" />
         <div className="h-10 w-11/12 bg-gray-200 animate-pulse mb-5" />
         <div className="flex items-center gap-4 mb-4">
@@ -112,6 +116,9 @@ export default function Collection() {
 
   return (
     <>
+      <Head>
+        <title>{data.title}</title>
+      </Head>
       <section className="py-10">
         <h1 className="font-serif font-bold text-4xl text-gray-900">
           {data.title}

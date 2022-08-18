@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { CollectionCard } from "../components/CollectionCard";
@@ -41,6 +42,9 @@ export const Search = () => {
 
   return (
     <>
+      <Head>
+        <title>Search | {query}</title>
+      </Head>
       <h1 className="text-3xl font-bold font-serif text-gray-900 my-14">
         Search Results for: {query}
       </h1>

@@ -8,6 +8,7 @@ import "../styles/globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ReactQueryDevtools } from "react-query/devtools";
+import Head from "next/head";
 
 const MyApp: AppType = ({
   Component,
@@ -15,6 +16,19 @@ const MyApp: AppType = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Head>
+        <meta charSet="UTF-8" />
+        <meta
+          name="description"
+          content="Embrace the world of books through exploration of personalized, curated collections"
+        />
+        <meta
+          name="keywords"
+          content="books, collections, recommendations, authors"
+        />
+        <meta name="author" content="Raheel Junaid" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       <div className="min-h-screen min-w-screen grid grid-rows-[auto_1fr_auto]">
         <Header />
         <main className="container">

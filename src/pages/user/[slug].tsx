@@ -8,6 +8,8 @@ import Button from "../../components/Button";
 import { Edit, Plus } from "tabler-icons-react";
 import { useRouter } from "next/router";
 import Pagination from "../../components/Pagination";
+import Head from "next/head";
+import Alert from "../../components/Alert";
 
 export default function UserPage() {
   const { data: session } = useSession();
@@ -60,8 +62,22 @@ export default function UserPage() {
     },
   });
 
+  if (!isLoading && !data) {
+    return (
+      <>
+        <Head>
+          <title>Error</title>
+        </Head>
+        <Alert message="User not found" showAction />
+      </>
+    );
+  }
+
   return (
     <>
+      <Head>
+        <title>{`${data?.user.name || "Loading user"}'s collections`}</title>
+      </Head>
       <section className="flex flex-col gap-6 pt-14">
         {isLoading ? (
           <>

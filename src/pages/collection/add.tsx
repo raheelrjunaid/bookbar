@@ -9,6 +9,7 @@ import Divider from "../../components/Divider";
 import BookProps from "../../types/bookProps";
 import { trpc } from "../../utils/trpc";
 import { useForm } from "react-hook-form";
+import Head from "next/head";
 
 export const AddCollection: NextPage = () => {
   const router = useRouter();
@@ -49,6 +50,9 @@ export const AddCollection: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Add Collection</title>
+      </Head>
       <section>
         <h1 className="text-3xl font-serif text-gray-900 mt-10 mb-5">
           Create New Collection

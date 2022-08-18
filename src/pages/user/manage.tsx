@@ -12,6 +12,7 @@ import { Popover } from "@headlessui/react";
 import Image from "next/image";
 import cloudinary from "../../utils/cloudinary";
 import { useState } from "react";
+import Head from "next/head";
 
 export const Manage: NextPage = () => {
   const {
@@ -84,6 +85,9 @@ export const Manage: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Manage Account | BookBar</title>
+      </Head>
       <form
         onSubmit={handleSubmit(({ image: images, ...rest }) => {
           if (images.length) {
