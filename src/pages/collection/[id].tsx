@@ -118,23 +118,25 @@ export default function Collection() {
               </a>
             </Link>
           </div>
-          {favouriteStatus === "success" && (
-            <Button
-              variant="primary"
-              onClick={() => favouriteMutation.mutate({ collectionId })}
-              rightIcon={isFavourited ? <HeartOff /> : <Heart />}
-              compact
-              className={`rounded-full
+          {!!session &&
+            favouriteStatus === "success" &&
+            data.user.id !== session?.user?.id && (
+              <Button
+                variant="primary"
+                onClick={() => favouriteMutation.mutate({ collectionId })}
+                rightIcon={isFavourited ? <HeartOff /> : <Heart />}
+                compact
+                className={`rounded-full
               ${
                 isFavourited
                   ? "bg-gray-200 text-gray-800"
-                  : "bg-red-200 text-red-800"
+                  : "bg-red-200 !text-red-800"
               }
               `}
-            >
-              {isFavourited ? "Unfavourite" : "Favourite"}
-            </Button>
-          )}
+              >
+                {isFavourited ? "Unfavourite" : "Favourite"}
+              </Button>
+            )}
         </div>
         <div className="flex justify-between gap-3 my-4">
           <div>
