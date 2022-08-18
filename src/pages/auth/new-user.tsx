@@ -25,10 +25,10 @@ export const NewUser: NextPage = () => {
 
   const updateAccountMutation = trpc.useMutation(["user.updateProfile"]);
 
-  // if (userData?.name && userData?.image) {
-  //   router.push("/user/manage");
-  //   return <div>Redirecting...</div>;
-  // }
+  if (userData?.name) {
+    router.push("/user/manage");
+    return <div>Redirecting...</div>;
+  }
 
   const filePreviewHandler = (fileArray: FileList | null) => {
     if (fileArray?.length) {
@@ -41,7 +41,6 @@ export const NewUser: NextPage = () => {
       };
     }
   };
-  console.log(cloudinary.image(userData?.image as string | undefined).toURL());
 
   return (
     <form
@@ -106,7 +105,9 @@ export const NewUser: NextPage = () => {
           <Image
             src={
               previewImage ||
-              cloudinary.image(userData?.image as string | undefined).toURL() ||
+              cloudinary
+                .image(`bookbar/${userData?.id}-profile-image`)
+                .toURL() ||
               "/image-not-found"
             }
             alt={userData?.name || "User"}
