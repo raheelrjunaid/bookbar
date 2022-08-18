@@ -34,10 +34,10 @@ export const collectionRouter = createRouter()
     }),
     async resolve({ ctx: { prisma }, input }) {
       const collectionTotal = await prisma.collection.count();
-      const totalPages = Math.ceil(collectionTotal / 10);
+      const totalPages = Math.ceil(collectionTotal / 9);
       const collections = await prisma.collection.findMany({
-        skip: (input.pageNumber - 1) * 10,
-        take: 10,
+        skip: (input.pageNumber - 1) * 9,
+        take: 9,
         include: {
           books: {
             select: {
@@ -77,10 +77,10 @@ export const collectionRouter = createRouter()
           },
         },
       });
-      const totalPages = Math.ceil(collectionTotal / 10);
+      const totalPages = Math.ceil(collectionTotal / 9);
       const collections = await prisma.collection.findMany({
-        skip: (input.pageNumber - 1) * 10,
-        take: 10,
+        skip: (input.pageNumber - 1) * 9,
+        take: 9,
         where: {
           user: {
             slug: input.userSlug,
@@ -139,10 +139,10 @@ export const collectionRouter = createRouter()
           },
         },
       });
-      const totalPages = Math.ceil(collectionTotal / 10);
+      const totalPages = Math.ceil(collectionTotal / 9);
       const collections = await prisma.collection.findMany({
-        skip: (input.pageNumber - 1) * 10,
-        take: 10,
+        skip: (input.pageNumber - 1) * 9,
+        take: 9,
         where: {
           title: {
             search: input.q,
