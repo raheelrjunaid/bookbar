@@ -29,22 +29,11 @@ export const authOptions: NextAuthOptions = {
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
       sendVerificationRequest({ identifier, url }) {
-        const emailsDir = path.resolve(process.cwd(), "emails");
-        const emailFile = readFileSync(
-          path.join(emailsDir, "confirm-email.html"),
-          {
-            encoding: "utf8",
-          }
-        );
-        const emailTemplate = Handlebars.compile(emailFile);
         transporter.sendMail({
           from: `"No-Reply | Bookbar`,
           to: identifier,
           subject: "Your sign-in link for Bookbar",
-          html: emailTemplate({
-            signin_url: url,
-            email: identifier,
-          }),
+          html: `<a href="${url}" target="_blank">Login</a>`,
         });
       },
     }),
