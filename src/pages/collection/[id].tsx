@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Rating from "../../components/Rating";
 import Button from "../../components/Button";
-import { Heart, HeartOff } from "tabler-icons-react";
+import { Heart, HeartOff, Trash } from "tabler-icons-react";
 import { useSession } from "next-auth/react";
 import Divider from "../../components/Divider";
 import Book from "../../components/Book";
@@ -38,6 +38,7 @@ export default function Collection() {
       enabled: !!session,
     }
   );
+
   const favouriteMutation = trpc.useMutation(["collection.toggleFavourite"], {
     async onMutate() {
       await utils.cancelQuery(["collection.isFavourited", { collectionId }]);
@@ -48,6 +49,11 @@ export default function Collection() {
     },
     onSettled() {
       utils.invalidateQueries(["collection.isFavourited", { collectionId }]);
+    },
+  });
+  const deleteMutation = trpc.useMutation(["collection.delete"], {
+    onSettled() {
+      router.push("/");
     },
   });
   const ratingMutation = trpc.useMutation(["collection.rate"], {
@@ -136,24 +142,34 @@ export default function Collection() {
             </Link>
           </div>
           {!!session &&
-            favouriteStatus === "success" &&
-            data.user.id !== session?.user?.id && (
-              <Button
-                variant="primary"
-                onClick={() => favouriteMutation.mutate({ collectionId })}
-                rightIcon={isFavourited ? <HeartOff /> : <Heart />}
-                compact
-                className={`rounded-full
+          favouriteStatus === "success" &&
+          data.user.id !== session?.user?.id ? (
+            <Button
+              onClick={() => favouriteMutation.mutate({ collectionId })}
+              rightIcon={isFavourited ? <HeartOff /> : <Heart />}
+              loading={favouriteMutation.isLoading}
+              compact
+              className={`rounded-full
               ${
                 isFavourited
                   ? "bg-gray-200 text-gray-800"
                   : "bg-red-200 !text-red-800"
               }
               `}
-              >
-                {isFavourited ? "Unfavourite" : "Favourite"}
-              </Button>
-            )}
+            >
+              {isFavourited ? "Unfavourite" : "Favourite"}
+            </Button>
+          ) : (
+            <Button
+              onClick={() => deleteMutation.mutate({ id: collectionId })}
+              rightIcon={<Trash />}
+              loading={deleteMutation.isLoading}
+              compact
+              className="bg-red-600 rounded-full"
+            >
+              Delete
+            </Button>
+          )}
         </div>
         <div className="flex justify-between gap-3 my-4">
           <div>
