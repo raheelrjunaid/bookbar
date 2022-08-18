@@ -131,6 +131,17 @@ export const BookSearch = ({
           )}
         </Combobox.Options>
       </div>
+      <p className="-mt-3 text-sm text-gray-500">
+        Powered by{" "}
+        <a
+          className="text-purple-500 hover:underline"
+          rel="noopener noreferrer"
+          target="_blank"
+          href="http://books.google.com/"
+        >
+          Google Books
+        </a>
+      </p>
     </Combobox>
   );
 };
