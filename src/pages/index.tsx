@@ -99,7 +99,7 @@ const Home: NextPage = () => {
         )}
       </section>
 
-      <section className="pt-10 flex justify-center">
+      <section className="pb-14 pt-6 flex justify-center">
         <Link href="/collection/add">
           <Button size="lg" rightIcon={<Plus />}>
             Add Collection

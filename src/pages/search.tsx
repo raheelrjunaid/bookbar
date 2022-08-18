@@ -23,16 +23,18 @@ export const Search = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold font-serif text-gray-900 mt-14">
+      <h1 className="text-3xl font-bold font-serif text-gray-900 my-14">
         Search Results for: {query}
       </h1>
       <Divider />
       <section className="grid grid-cols-1 gap-4">
-        {isLoading
-          ? Array.from({ length: 10 }).map((_, i) => (
-              <CollectionCard.Loading key={i} />
-            ))
-          : results?.collections?.map(({ id, title, user, books }) => (
+        {isLoading ? (
+          Array.from({ length: 10 }).map((_, i) => (
+            <CollectionCard.Loading key={i} />
+          ))
+        ) : results?.collections?.length ? (
+          <>
+            {results?.collections?.map(({ id, title, user, books }) => (
               <CollectionCard
                 key={id}
                 bookCovers={books.map(({ cover }) => cover)}
@@ -42,12 +44,16 @@ export const Search = () => {
                 collectionId={id}
               />
             ))}
-        {results && results.totalPages > 1 && (
-          <Pagination
-            totalPages={results?.totalPages as number}
-            basePath={`/search?q=${query}&`}
-            pageNumber={pageNumber}
-          />
+            {results.totalPages > 1 && (
+              <Pagination
+                totalPages={results?.totalPages as number}
+                basePath={`/search?q=${query}&`}
+                pageNumber={pageNumber}
+              />
+            )}
+          </>
+        ) : (
+          <h2 className="text-center text-gray-700">No collections found.</h2>
         )}
       </section>
     </>
