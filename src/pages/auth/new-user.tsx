@@ -90,13 +90,13 @@ export const NewUser: NextPage = () => {
 
           router.push("/user/manage");
         })}
-        className="pt-14"
+        className="pt-14 max-w-sm mx-auto"
       >
         <div>
-          <h1 className="text-gray-900 font-serif font-bold text-4xl mb-2">
+          <h1 className="text-gray-900 font-serif text-4xl mb-2">
             Let&apos;s get started:
           </h1>
-          <p className="text-gray-600 mb-5">
+          <p className="text-gray-600 mb-8">
             We need some basic information to get you started.
           </p>
         </div>
@@ -111,6 +111,7 @@ export const NewUser: NextPage = () => {
             <Image
               src={
                 previewImage ||
+                userData?.image ||
                 cloudinary
                   .image(`bookbar/${userData?.id}-profile-image`)
                   .toURL() ||

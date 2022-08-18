@@ -1,8 +1,10 @@
 import { Collection, User } from "@prisma/client";
 import { useRouter } from "next/router";
 import { UseMutationResult } from "react-query";
+import Image from "next/image";
 import { CollectionCard } from "./CollectionCard";
 import Pagination from "./Pagination";
+import { Mailbox } from "tabler-icons-react";
 
 interface CollectionGridProps {
   isLoading: boolean;
@@ -46,18 +48,23 @@ export const CollectionGrid = ({
             />
           ))
         ) : (
-          <h2 className="text-center text-gray-700 col-span-full">
-            No collections found.
-          </h2>
+          <>
+            <h2 className="text-center text-gray-700 col-span-full">
+              No collections found.
+            </h2>
+          </>
         )}
       </section>
-      {collections?.length && totalPages && totalPages > 1 && (
-        <Pagination
-          totalPages={totalPages}
-          basePath={basePath}
-          pageNumber={pageNumber}
-        />
-      )}
+      {collections?.length
+        ? totalPages &&
+          totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              basePath={basePath}
+              pageNumber={pageNumber}
+            />
+          )
+        : null}
     </>
   );
 };

@@ -39,13 +39,13 @@ export const SignIn: NextPage = () => {
       </Head>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col max-w-sm mt-14 gap-4"
+        className="flex flex-col max-w-sm mt-14 gap-4 mx-auto"
       >
-        <div>
-          <h1 className="text-gray-900 font-serif font-bold text-4xl mb-2">
+        <div className="text-center mb-6">
+          <h1 className="mt-1 text-4xl font-serif text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
             Welcome
           </h1>
-          <p className="text-gray-600 mb-5">
+          <p className="max-w-xl mt-3 mx-auto text-lg sm:text-xl text-gray-500">
             Login to access your account and start adding posts
           </p>
         </div>

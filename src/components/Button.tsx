@@ -35,7 +35,7 @@ export const Button = ({
       loading && "cursor-not-allowed opacity-60",
       size === "lg" && "py-3 px-5 text-lg",
       size === "sm" && "text-sm",
-      (compact || size === "sm") && "py-1 px-2",
+      (compact || size === "sm") && "py-1 px-3",
       className
     )}
   >

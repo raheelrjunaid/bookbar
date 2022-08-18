@@ -181,7 +181,7 @@ export const Header = () => {
             </Link>
           )}
           {!!session?.user ? (
-            <Menu as="div" className="relative">
+            <Menu as="div" className="relative hidden md:block">
               <Menu.Button className="rounded-md focus:outline-purple-400 flex items-center text-gray-900">
                 <div className="w-8 aspect-square overflow-hidden rounded-full relative cursor-pointer">
                   <Image

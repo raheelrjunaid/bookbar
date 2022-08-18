@@ -6,8 +6,6 @@ import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import { Edit, ExternalLink } from "tabler-icons-react";
 import Link from "next/link";
-import Divider from "../../components/Divider";
-import { CollectionCard } from "../../components/CollectionCard";
 import { Popover } from "@headlessui/react";
 import Image from "next/image";
 import cloudinary from "../../utils/cloudinary";
@@ -23,7 +21,6 @@ export const Manage: NextPage = () => {
     watch,
   } = useForm();
   const router = useRouter();
-  const utils = trpc.useContext();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const filePreviewHandler = (fileArray: FileList | null) => {
@@ -39,43 +36,6 @@ export const Manage: NextPage = () => {
   };
 
   const { data: userData } = trpc.useQuery(["user.getUser"]);
-  const { data: collectionData } = trpc.useQuery(
-    [
-      "collection.getAllByUserSlug",
-      {
-        userSlug: userData?.slug as string,
-      },
-    ],
-    {
-      enabled: !!userData,
-    }
-  );
-  const deleteCollectionMutation = trpc.useMutation(["collection.delete"], {
-    async onMutate(deletedCollection) {
-      await utils.cancelQuery([
-        "collection.getAllByUserSlug",
-        { userSlug: userData?.slug as string },
-      ]);
-      utils.setQueryData(
-        ["collection.getAllByUserSlug", { userSlug: slug }],
-        (oldData: any) => {
-          if (!oldData) return;
-          return {
-            ...oldData,
-            collections: oldData.collections.filter(
-              ({ id }: { id: string }) => id !== deletedCollection.id
-            ),
-          };
-        }
-      );
-    },
-    onSettled() {
-      utils.invalidateQueries([
-        "collection.getAllByUserSlug",
-        { userSlug: userData?.slug },
-      ]);
-    },
-  });
   const deleteAccountMutation = trpc.useMutation("user.delete", {
     onSuccess: () => {
       router.push("/");
@@ -127,9 +87,9 @@ export const Manage: NextPage = () => {
             ...rest,
           });
         })}
-        className="pt-14"
+        className="mx-auto max-w-sm pt-14"
       >
-        <div className="flex items-center justify-between mb-7 ">
+        <div className="mb-7 flex items-center justify-between ">
           <div className="grow">
             <h1 className="font-serif text-4xl text-gray-900 ">
               Manage Profile
@@ -151,7 +111,7 @@ export const Manage: NextPage = () => {
               htmlFor="image"
               className="relative aspect-square w-16 overflow-hidden rounded-full"
             >
-              <div className="absolute inset-0 text-white bg-black/25 z-10 flex items-center justify-center">
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25 text-white">
                 <Edit />
               </div>
               <Image
@@ -209,7 +169,7 @@ export const Manage: NextPage = () => {
             errors={errors}
             name="email"
             render={({ message }) => (
-              <p className="text-red-500 text-center">{message}</p>
+              <p className="text-center text-red-500">{message}</p>
             )}
           />
           <div>
@@ -236,19 +196,19 @@ export const Manage: NextPage = () => {
               errors={errors}
               name="name"
               render={({ message }) => (
-                <p className="text-red-500 text-center mt-1">{message}</p>
+                <p className="mt-1 text-center text-red-500">{message}</p>
               )}
             />
             <ErrorMessage
               errors={errors}
               name="image"
               render={({ message }) => (
-                <p className="text-red-500 text-center mt-1">{message}</p>
+                <p className="mt-1 text-center text-red-500">{message}</p>
               )}
             />
           </div>
         </div>
-        <div className="flex mt-7 gap-4">
+        <div className="mt-7 flex gap-4">
           <Button
             type="submit"
             disabled={!watch().email && !watch().name && !watch().image}
@@ -257,10 +217,10 @@ export const Manage: NextPage = () => {
             Update Profile
           </Button>
           <Popover className="relative">
-            <Popover.Button className="text-red-600 border-red-600 border py-2 px-4">
+            <Popover.Button className="border border-red-600 py-2 px-4 text-red-600">
               Delete Account
             </Popover.Button>
-            <Popover.Panel className="absolute bg-white left-1/2 z-50 mt-3 -translate-x-1/2 transform p-4 lg:max-w-3xl border border-gray-200 shadow-lg shadow-gray-200 rounded-md">
+            <Popover.Panel className="absolute left-1/2 z-50 mt-3 -translate-x-1/2 transform rounded-md border border-gray-200 bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-3xl">
               <div className="flex gap-4">
                 <Button
                   variant="subtle"
@@ -273,7 +233,7 @@ export const Manage: NextPage = () => {
                 <Button
                   compact
                   type="button"
-                  className="text-white bg-red-600"
+                  className="bg-red-600 text-white"
                   loading={deleteAccountMutation.isLoading}
                   onClick={() => deleteAccountMutation.mutate()}
                 >
@@ -284,20 +244,6 @@ export const Manage: NextPage = () => {
           </Popover>
         </div>
       </form>
-
-      <Divider />
-      <section className="grid grid-cols-1 gap-4">
-        {collectionData?.collections.map(({ id, title, books }) => (
-          <CollectionCard
-            key={id}
-            collectionId={id}
-            title={title}
-            user={collectionData.user}
-            bookCovers={books.map(({ cover }) => cover)}
-            handleRemove={() => deleteCollectionMutation.mutate({ id })}
-          />
-        ))}
-      </section>
     </>
   );
 };

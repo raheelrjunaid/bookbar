@@ -43,8 +43,9 @@ export const Search = () => {
       <Head>
         <title>Search | {query}</title>
       </Head>
-      <h1 className="text-3xl font-serif text-gray-900 my-14">
-        Search Results for: {query}
+      <h1 className="text-3xl font-serif text-gray-900 sm:text-4xl sm:tracking-tight my-14">
+        Search Results for:{" "}
+        <span className="text-purple-600">{query || "nothing yet :)"}</span>
       </h1>
 
       <CollectionGrid

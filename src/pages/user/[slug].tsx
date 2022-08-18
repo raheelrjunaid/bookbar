@@ -79,11 +79,11 @@ export default function UserPage() {
       <Head>
         <title>{`${data?.user.name || "Loading user"}'s collections`}</title>
       </Head>
-      <section className="flex flex-col gap-6 pt-14">
+      <section className="mb-9 flex flex-col gap-6 pt-14">
         {isLoading ? (
           <>
-            <div className="h-10 bg-gray-200 animate-pulse" />
-            <div className="h-10 bg-gray-200 w-11/12" />
+            <div className="h-10 animate-pulse bg-gray-200" />
+            <div className="h-10 w-11/12 bg-gray-200" />
           </>
         ) : (
           <>

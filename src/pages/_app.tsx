@@ -29,7 +29,7 @@ const MyApp: AppType = ({
         <meta name="author" content="Raheel Junaid" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      <div className="min-h-screen min-w-screen grid grid-rows-[auto_1fr_auto]">
+      <div className="min-h-screen min-w-screen grid grid-rows-[auto_1fr_auto] relative">
         <Header />
         <main className="container">
           <Component {...pageProps} />

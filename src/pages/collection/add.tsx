@@ -53,14 +53,14 @@ export const AddCollection: NextPage = () => {
       <Head>
         <title>Add Collection</title>
       </Head>
-      <section>
-        <h1 className="text-3xl font-serif text-gray-900 mt-10 mb-5">
-          Create New Collection
-        </h1>
+      <section className="mt-14 grid grid-cols-1 items-start gap-6 md:grid-cols-2 xl:grid-cols-3 ">
         <form
-          className="flex flex-col gap-4 caret-purple-500"
+          className="relative flex flex-col gap-4 caret-purple-500 md:sticky md:top-10"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <h1 className="mb-3 font-serif text-4xl text-gray-900">
+            Create New Collection
+          </h1>
           <input
             type="text"
             placeholder="Collection Name"
@@ -70,7 +70,7 @@ export const AddCollection: NextPage = () => {
             })}
           />
           {errors.title && (
-            <p className="text-red-500 text-center">{errors.title.message}</p>
+            <p className="text-center text-red-500">{errors.title.message}</p>
           )}
           <textarea placeholder="Description" {...register("description")} />
           <BookSearch
@@ -83,9 +83,20 @@ export const AddCollection: NextPage = () => {
             }}
           />
           {errors.books && (
-            <p className="text-red-500 text-center">{errors.books.message}</p>
+            <p className="text-center text-red-500">{errors.books.message}</p>
           )}
-          <Divider />
+          <div className="flex justify-center ">
+            <Button
+              size="lg"
+              rightIcon={<Check />}
+              loading={collectionMutation.isLoading}
+              type="submit"
+            >
+              Publish
+            </Button>
+          </div>
+        </form>
+        <div className="grid grid-cols-1 gap-6 xl:col-span-2 xl:grid-cols-2">
           {selectedBooks.map((book: BookProps) => (
             <Book
               key={book.id}
@@ -101,17 +112,7 @@ export const AddCollection: NextPage = () => {
               }}
             />
           ))}
-          <div className="pt-10 flex justify-center">
-            <Button
-              size="lg"
-              rightIcon={<Check />}
-              loading={collectionMutation.isLoading}
-              type="submit"
-            >
-              Publish
-            </Button>
-          </div>
-        </form>
+        </div>
       </section>
     </>
   );

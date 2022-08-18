@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -7,7 +6,6 @@ import Rating from "../../components/Rating";
 import Button from "../../components/Button";
 import { Heart, HeartOff, Trash } from "tabler-icons-react";
 import { useSession } from "next-auth/react";
-import Divider from "../../components/Divider";
 import Book from "../../components/Book";
 import cloudinary from "../../utils/cloudinary";
 import Alert from "../../components/Alert";
@@ -79,31 +77,31 @@ export default function Collection() {
         <Head>
           <title>Loading collection...</title>
         </Head>
-        <div className="h-10 w-full bg-gray-200 animate-pulse mt-14 mb-3" />
-        <div className="h-10 w-11/12 bg-gray-200 animate-pulse mb-5" />
-        <div className="flex items-center gap-4 mb-4">
-          <div className="rounded-full h-10 w-10 bg-gray-200 animate-pulse" />
-          <div className="h-5 rounded-full w-52 bg-gray-200 animate-pulse" />
+        <div className="mt-14 mb-3 h-10 w-full animate-pulse bg-gray-200" />
+        <div className="mb-5 h-10 w-11/12 animate-pulse bg-gray-200" />
+        <div className="mb-4 flex items-center gap-4">
+          <div className="h-10 w-10 animate-pulse rounded-full bg-gray-200" />
+          <div className="h-5 w-52 animate-pulse rounded-full bg-gray-200" />
         </div>
-        <div className="flex justify-between mb-6">
-          <div className="h-14 w-32 bg-gray-200 animate-pulse" />
-          <div className="h-14 w-32 bg-gray-200 animate-pulse" />
+        <div className="mb-6 flex justify-between">
+          <div className="h-14 w-32 animate-pulse bg-gray-200" />
+          <div className="h-14 w-32 animate-pulse bg-gray-200" />
         </div>
         {Array.from({ length: 5 }).map((_, i) => (
-          <div className="h-5 mb-2 w-full bg-gray-200 animate-pulse" key={i} />
+          <div className="mb-2 h-5 w-full animate-pulse bg-gray-200" key={i} />
         ))}
         {Array.from({ length: 9 }).map((_, i) => (
           <div
-            className="h-42 w-full flex mt-9 p-5 gap-4 shadow-lg shadow-gray-200"
+            className="h-42 mt-9 flex w-full gap-4 p-5 shadow-lg shadow-gray-200"
             key={i}
           >
-            <div className="h-20 w-16 bg-gray-200 animate-pulse" />
-            <div className="grow flex flex-col gap-2 items-start">
-              <div className="h-4 w-full bg-gray-200 animate-pulse" />
-              <div className="h-4 w-1/2 bg-gray-200 animate-pulse mb-3" />
-              <div className="h-4  w-1/2 bg-gray-200 animate-pulse mb-3" />
-              <div className="h-3 w-1/2 bg-gray-200 animate-pulse" />
-              <div className="h-3 w-1/2 bg-gray-200 animate-pulse" />
+            <div className="h-20 w-16 animate-pulse bg-gray-200" />
+            <div className="flex grow flex-col items-start gap-2">
+              <div className="h-4 w-full animate-pulse bg-gray-200" />
+              <div className="mb-3 h-4 w-1/2 animate-pulse bg-gray-200" />
+              <div className="mb-3  h-4 w-1/2 animate-pulse bg-gray-200" />
+              <div className="h-3 w-1/2 animate-pulse bg-gray-200" />
+              <div className="h-3 w-1/2 animate-pulse bg-gray-200" />
             </div>
           </div>
         ))}
@@ -119,107 +117,106 @@ export default function Collection() {
       <Head>
         <title>{data.title}</title>
       </Head>
-      <section className="py-10">
-        <h1 className="font-serif font-bold text-4xl text-gray-900">
-          {data.title}
-        </h1>
-        <div className="flex items-center gap-3 mb-3 mt-5 justify-between">
-          <div className="flex items-center gap-3">
-            <Link href={`/user/${data.user.slug}`}>
-              <div className="flex-none w-10 aspect-square overflow-hidden rounded-full relative cursor-pointer">
-                <Image
-                  src={
-                    data.user.image ||
-                    cloudinary
-                      .image(`bookbar/${data.user.id}-profile-image`)
-                      .toURL() ||
-                    "/image-not-found"
-                  }
-                  layout="fill"
-                  objectPosition="center"
-                  objectFit="cover"
-                  alt={data.user.name || "User"}
-                />
-              </div>
-            </Link>
-            <Link href={`/user/${data.user.slug}`} passHref>
-              <a className="text-gray-500 hover:underline">
-                By: {data.user.name}
-              </a>
-            </Link>
-          </div>
-          {!!session &&
-          favouriteStatus === "success" &&
-          data.user.id !== session?.user?.id ? (
-            <Button
-              onClick={() => favouriteMutation.mutate({ collectionId })}
-              rightIcon={isFavourited ? <HeartOff /> : <Heart />}
-              loading={favouriteMutation.isLoading}
-              compact
-              className={`rounded-full
+      <section className="relative grid grid-cols-1 place-items-start gap-6 py-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="relative sm:sticky sm:top-10">
+          <h1 className="font-serif text-4xl text-gray-900">{data.title}</h1>
+          <div className="mb-3 mt-5 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Link href={`/user/${data.user.slug}`}>
+                <div className="relative aspect-square w-10 flex-none cursor-pointer overflow-hidden rounded-full">
+                  <Image
+                    src={
+                      data.user.image ||
+                      cloudinary
+                        .image(`bookbar/${data.user.id}-profile-image`)
+                        .toURL() ||
+                      "/image-not-found"
+                    }
+                    layout="fill"
+                    objectPosition="center"
+                    objectFit="cover"
+                    alt={data.user.name || "User"}
+                  />
+                </div>
+              </Link>
+              <Link href={`/user/${data.user.slug}`} passHref>
+                <a className="text-gray-500 hover:underline">
+                  By: {data.user.name}
+                </a>
+              </Link>
+            </div>
+            {!!session &&
+            favouriteStatus === "success" &&
+            data.user.id !== session?.user?.id ? (
+              <Button
+                onClick={() => favouriteMutation.mutate({ collectionId })}
+                rightIcon={isFavourited ? <HeartOff /> : <Heart />}
+                loading={favouriteMutation.isLoading}
+                compact
+                className={`rounded-full
               ${
                 isFavourited
                   ? "bg-gray-200 text-gray-800"
                   : "bg-red-200 !text-red-800"
               }
               `}
-            >
-              {isFavourited ? "Unfavourite" : "Favourite"}
-            </Button>
-          ) : (
-            <Button
-              onClick={() => deleteMutation.mutate({ id: collectionId })}
-              rightIcon={<Trash />}
-              loading={deleteMutation.isLoading}
-              compact
-              className="bg-red-600 rounded-full"
-            >
-              Delete
-            </Button>
-          )}
-        </div>
-        <div className="flex justify-between gap-3 my-4">
-          <div>
-            <p>
-              {avgRating?._count.rating} rating
-              {avgRating?._count.rating === 1 ? "" : "s"}
-            </p>
-            {!ratingLoading ? (
-              <Rating
-                ratingValue={avgRating?._avg.rating || 0}
-                readonly
-                size={22}
-              />
+              >
+                {isFavourited ? "Unfavourite" : "Favourite"}
+              </Button>
             ) : (
-              <p className="text-gray-300">Loading Ratings</p>
+              <Button
+                onClick={() => deleteMutation.mutate({ id: collectionId })}
+                rightIcon={<Trash />}
+                loading={deleteMutation.isLoading}
+                compact
+                className="rounded-full bg-red-600"
+              >
+                Delete
+              </Button>
             )}
           </div>
-          <div className="text-right">
-            {sessionStatus !== "loading" && (
-              <>
-                <p>Your Rating</p>
+          <div className="my-4 flex justify-between gap-3">
+            <div>
+              <p>
+                {avgRating?._count.rating} rating
+                {avgRating?._count.rating === 1 ? "" : "s"}
+              </p>
+              {!ratingLoading ? (
                 <Rating
-                  ratingValue={userRating?.rating || 0}
-                  fillColor="#4b5563"
-                  readonly={data.user.id === session?.user?.id}
+                  ratingValue={avgRating?._avg.rating || 0}
+                  readonly
                   size={22}
-                  onClick={(value) => {
-                    if (!session) return router.push("/api/auth/signin");
-                    ratingMutation.mutate({
-                      rating: value / 20,
-                      collectionId,
-                    });
-                  }}
-                  className="!text-gray-600"
                 />
-              </>
-            )}
+              ) : (
+                <p className="text-gray-300">Loading Ratings</p>
+              )}
+            </div>
+            <div className="text-right">
+              {sessionStatus !== "loading" && (
+                <>
+                  <p>Your Rating</p>
+                  <Rating
+                    ratingValue={userRating?.rating || 0}
+                    fillColor="#4b5563"
+                    readonly={data.user.id === session?.user?.id}
+                    size={22}
+                    onClick={(value) => {
+                      if (!session) return router.push("/api/auth/signin");
+                      ratingMutation.mutate({
+                        rating: value / 20,
+                        collectionId,
+                      });
+                    }}
+                    className="!text-gray-600"
+                  />
+                </>
+              )}
+            </div>
           </div>
+          <p className="text-lg font-light">{data.description}</p>
         </div>
-        <p className="font-light text-lg">{data.description}</p>
-        <Divider />
         {data.books && (
-          <div className="flex flex-col gap-3">
+          <div className="col-span-1 grid grid-cols-1 gap-6  lg:col-span-2 lg:grid-cols-2 xl:col-span-3 xl:grid-cols-3">
             {data.books.map((book) => (
               <Book
                 key={book.id}

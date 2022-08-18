@@ -5,8 +5,6 @@ import { signIn, useSession } from "next-auth/react";
 import Button from "../components/Button";
 import { Plus } from "tabler-icons-react";
 import Link from "next/link";
-import { CollectionCard } from "../components/CollectionCard";
-import Pagination from "../components/Pagination";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import CollectionGrid from "../components/CollectionGrid";
