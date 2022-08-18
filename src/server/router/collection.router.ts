@@ -44,14 +44,7 @@ export const collectionRouter = createRouter()
               cover: true,
             },
           },
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-              slug: true,
-            },
-          },
+          user: true,
         },
       });
       return {
@@ -99,6 +92,7 @@ export const collectionRouter = createRouter()
               cover: true,
             },
           },
+          user: true,
         },
       });
       return {
@@ -163,14 +157,7 @@ export const collectionRouter = createRouter()
               cover: true,
             },
           },
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-              slug: true,
-            },
-          },
+          user: true,
         },
       });
       return {

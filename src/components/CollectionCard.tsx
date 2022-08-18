@@ -11,18 +11,13 @@ import { Trash } from "tabler-icons-react";
 import Highlighter from "react-highlight-words";
 import cloudinary from "../utils/cloudinary";
 import { CollectionCardLoader } from "./loaders/CollectionCardLoader";
-import { ReactElement, ReactNode } from "react";
+import { User } from "@prisma/client";
 
 interface CollectionCardProps {
   bookCovers: (string | null)[];
   searchQuery?: string;
   title: string;
-  user: {
-    id: string;
-    name: string;
-    image: string | null;
-    slug: string;
-  };
+  user: User;
   collectionId: string;
   handleRemove: () => void;
 }
@@ -43,9 +38,9 @@ export const CollectionCard = ({
   let newBookCovers = bookCovers.filter(
     (cover) => typeof cover === "string"
   ) as string[];
-  // Ensure book covers repeat to take up space (of 7 books)
-  if (bookCovers.length < 7)
-    Array.from({ length: 7 - newBookCovers.length }).forEach(
+  // Ensure book covers repeat to take up space (of 10 books)
+  if (bookCovers.length < 10)
+    Array.from({ length: 10 - newBookCovers.length }).forEach(
       (_, index: number) => newBookCovers.push(newBookCovers[index] as string)
     );
 
@@ -74,7 +69,7 @@ export const CollectionCard = ({
 
   return (
     <div className="flex flex-col shadow-lg shadow-gray-200 border border-t-0 border-gray-200 relative">
-      <Marquee gradientColor={[229, 231, 235]} gradientWidth={100}>
+      <Marquee gradientColor={[229, 231, 235]} gradientWidth={0}>
         {newBookCovers.map((cover, index) => (
           <div className="shadow-md flex-none w-16 h-24 relative" key={index}>
             <Image
@@ -88,7 +83,7 @@ export const CollectionCard = ({
         ))}
       </Marquee>
       <span className="flex z-10 top-2 right-2 items-center px-2.5 py-0.5 rounded-full text-xs shadow-md bg-gray-900/75 text-white absolute">
-        {bookCovers.length} Books
+        {bookCovers.length} Book{bookCovers.length === 1 ? "" : "s"}
       </span>
       <div className="p-4 space-y-2">
         <div className="flex items-center gap-3">

@@ -1,9 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { CollectionCard } from "../components/CollectionCard";
-import Divider from "../components/Divider";
-import Pagination from "../components/Pagination";
+import CollectionGrid from "../components/CollectionGrid";
 import { trpc } from "../utils/trpc";
 
 export const Search = () => {
@@ -45,40 +43,17 @@ export const Search = () => {
       <Head>
         <title>Search | {query}</title>
       </Head>
-      <h1 className="text-3xl font-bold font-serif text-gray-900 my-14">
+      <h1 className="text-3xl font-serif text-gray-900 my-14">
         Search Results for: {query}
       </h1>
-      <Divider />
-      <section className="grid grid-cols-1 gap-4">
-        {isLoading ? (
-          Array.from({ length: 10 }).map((_, i) => (
-            <CollectionCard.Loading key={i} />
-          ))
-        ) : results?.collections?.length ? (
-          <>
-            {results?.collections?.map(({ id, title, user, books }) => (
-              <CollectionCard
-                key={id}
-                bookCovers={books.map(({ cover }) => cover)}
-                searchQuery={query}
-                title={title}
-                user={user}
-                collectionId={id}
-                handleRemove={() => deleteCollectionMutation.mutate({ id })}
-              />
-            ))}
-            {results.totalPages > 1 && (
-              <Pagination
-                totalPages={results?.totalPages as number}
-                basePath={`/search?q=${query}&`}
-                pageNumber={pageNumber}
-              />
-            )}
-          </>
-        ) : (
-          <h2 className="text-center text-gray-700">No collections found.</h2>
-        )}
-      </section>
+
+      <CollectionGrid
+        isLoading={isLoading}
+        collections={results?.collections}
+        deleteCollectionMutation={deleteCollectionMutation}
+        basePath={`/search/?q=${query}&`}
+        totalPages={results?.totalPages}
+      />
     </>
   );
 };

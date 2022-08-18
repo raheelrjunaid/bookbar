@@ -3,14 +3,13 @@ import Head from "next/head";
 import { trpc } from "../utils/trpc";
 import { signIn, useSession } from "next-auth/react";
 import Button from "../components/Button";
-import Divider from "../components/Divider";
 import { Plus } from "tabler-icons-react";
 import Link from "next/link";
 import { CollectionCard } from "../components/CollectionCard";
 import Pagination from "../components/Pagination";
 import { useRouter } from "next/router";
-import { parse } from "path";
 import { useEffect } from "react";
+import CollectionGrid from "../components/CollectionGrid";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -54,17 +53,15 @@ const Home: NextPage = () => {
         <title>Explore | BookBar</title>
       </Head>
 
-      <section className="flex flex-col gap-6 pt-14">
-        <div className="flex flex-col gap-2">
-          <h1 className="font-serif text-4xl text-gray-900">
-            Explore Popular Collections
-          </h1>
-          <p className="font-normal text-gray-700">
-            Get the best book recommendations from actual people!
-          </p>
-        </div>
+      <section className="max-w-7xl mx-auto py-16 sm:py-24 sm:px-6 text-center">
+        <h1 className="mt-1 text-4xl font-serif text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Explore Popular Collections
+        </h1>
+        <p className="max-w-xl mt-5 mx-auto text-lg sm:text-xl text-gray-500">
+          Get the best book recommendations from actual people!
+        </p>
         {sessionStatus === "unauthenticated" && (
-          <div className="flex items-center gap-3">
+          <div className="flex sm:flex-row flex-col justify-center gap-3 mt-7">
             <Button variant="outline" onClick={() => signIn()}>
               Log In
             </Button>
@@ -73,31 +70,13 @@ const Home: NextPage = () => {
         )}
       </section>
 
-      <Divider />
-
-      <section className="grid grid-cols-1 gap-4">
-        {collectionsLoading
-          ? Array.from({ length: 9 }).map((_, i) => (
-              <CollectionCard.Loading key={i} />
-            ))
-          : collectionData?.collections.map(({ id, title, user, books }) => (
-              <CollectionCard
-                key={id}
-                collectionId={id}
-                title={title}
-                user={user}
-                bookCovers={books.map(({ cover }) => cover)}
-                handleRemove={() => deleteCollectionMutation.mutate({ id })}
-              />
-            ))}
-        {collectionData?.totalPages && collectionData.totalPages > 1 && (
-          <Pagination
-            totalPages={collectionData.totalPages}
-            basePath="/?"
-            pageNumber={parseInt(pageNumber)}
-          />
-        )}
-      </section>
+      <CollectionGrid
+        isLoading={collectionsLoading}
+        collections={collectionData?.collections}
+        deleteCollectionMutation={deleteCollectionMutation}
+        basePath={"/?"}
+        totalPages={collectionData?.totalPages}
+      />
 
       <section className="pb-14 pt-6 flex justify-center">
         <Link href="/collection/add">

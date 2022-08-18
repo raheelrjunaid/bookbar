@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import Pagination from "../../components/Pagination";
 import Head from "next/head";
 import Alert from "../../components/Alert";
+import CollectionGrid from "../../components/CollectionGrid";
 
 export default function UserPage() {
   const { data: session } = useSession();
@@ -104,34 +105,13 @@ export default function UserPage() {
           </>
         )}
       </section>
-      <Divider />
-      <section className="grid grid-cols-1 gap-4">
-        {isLoading ? (
-          Array.from({ length: 9 }).map((_, i) => (
-            <CollectionCard.Loading key={i} />
-          ))
-        ) : data?.collections.length ? (
-          data.collections.map(({ id, title, books }) => (
-            <CollectionCard
-              key={id}
-              collectionId={id}
-              title={title}
-              user={data.user}
-              bookCovers={books.map(({ cover }) => cover)}
-              handleRemove={() => deleteCollectionMutation.mutate({ id })}
-            />
-          ))
-        ) : (
-          <h2 className="text-center text-gray-700">No collections found.</h2>
-        )}
-        {data?.totalPages && data?.totalPages > 1 && (
-          <Pagination
-            totalPages={data.totalPages}
-            basePath={`/user/${slug}?`}
-            pageNumber={pageNumber}
-          />
-        )}
-      </section>
+      <CollectionGrid
+        isLoading={isLoading}
+        collections={data?.collections}
+        deleteCollectionMutation={deleteCollectionMutation}
+        basePath={`/user/${slug}?`}
+        totalPages={data?.totalPages}
+      />
     </>
   );
 }
