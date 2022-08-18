@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import Divider from "../../components/Divider";
 import Book from "../../components/Book";
 import cloudinary from "../../utils/cloudinary";
+import Alert from "../../components/Alert";
 
 export default function Collection() {
   const router = useRouter();
@@ -17,16 +18,7 @@ export default function Collection() {
   const { data: session, status: sessionStatus } = useSession();
   const utils = trpc.useContext();
 
-  useEffect(() => {
-    utils.prefetchQuery([
-      "collection.getById",
-      {
-        id: router.query.id as string,
-      },
-    ]);
-  }, [router.query.id, utils]);
-
-  const { data, isLoading, isError } = trpc.useQuery([
+  const { data, isLoading, isError, error } = trpc.useQuery([
     "collection.getById",
     { id: collectionId },
   ]);
@@ -74,18 +66,43 @@ export default function Collection() {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading)
+    return (
+      <>
+        <div className="h-10 w-full bg-gray-200 animate-pulse mt-14 mb-3" />
+        <div className="h-10 w-11/12 bg-gray-200 animate-pulse mb-5" />
+        <div className="flex items-center gap-4 mb-4">
+          <div className="rounded-full h-10 w-10 bg-gray-200 animate-pulse" />
+          <div className="h-5 rounded-full w-52 bg-gray-200 animate-pulse" />
+        </div>
+        <div className="flex justify-between mb-6">
+          <div className="h-14 w-32 bg-gray-200 animate-pulse" />
+          <div className="h-14 w-32 bg-gray-200 animate-pulse" />
+        </div>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div className="h-5 mb-2 w-full bg-gray-200 animate-pulse" key={i} />
+        ))}
+        {Array.from({ length: 9 }).map((_, i) => (
+          <div
+            className="h-42 w-full flex mt-9 p-5 gap-4 shadow-lg shadow-gray-200"
+            key={i}
+          >
+            <div className="h-20 w-16 bg-gray-200 animate-pulse" />
+            <div className="grow flex flex-col gap-2 items-start">
+              <div className="h-4 w-full bg-gray-200 animate-pulse" />
+              <div className="h-4 w-1/2 bg-gray-200 animate-pulse mb-3" />
+              <div className="h-4  w-1/2 bg-gray-200 animate-pulse mb-3" />
+              <div className="h-3 w-1/2 bg-gray-200 animate-pulse" />
+              <div className="h-3 w-1/2 bg-gray-200 animate-pulse" />
+            </div>
+          </div>
+        ))}
+      </>
+    );
 
-  if (isError) {
-    return <div>Error</div>;
-  }
+  if (isError) return <Alert message={error.message} showAction />;
 
-  if (!data) {
-    router.push("/404");
-    return;
-  }
+  if (!data) return <Alert message="Collection not found" showAction />;
 
   return (
     <>

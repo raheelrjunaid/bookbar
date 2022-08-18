@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { InfinitySpin } from "react-loader-spinner";
 import Alert from "../../components/Alert";
 import { trpc } from "../../utils/trpc";
 
@@ -20,15 +21,17 @@ export const VerifyEmail: NextPage = () => {
   if (token && !verifying) {
     console.log("request sent");
     verifyEmailMutation.mutate({ token: token as string });
+  } else if (!token) {
+    return <Alert message="No token provided" showAction />;
   }
 
   if (verifyEmailMutation.error)
     return <Alert message={verifyEmailMutation.error.message} showAction />;
 
   return (
-    <h1 className="mt-14 font-bold font-serif text-gray-900 text-4xl">
-      Loading...
-    </h1>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <InfinitySpin color="#a855f7" />;
+    </div>
   );
 };
 

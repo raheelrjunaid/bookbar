@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 import { Trash } from "tabler-icons-react";
 import Highlighter from "react-highlight-words";
 import cloudinary from "../utils/cloudinary";
+import { CollectionCardLoader } from "./loaders/CollectionCardLoader";
+import { ReactElement, ReactNode } from "react";
 
 interface CollectionCardProps {
   bookCovers: (string | null)[];
@@ -177,3 +179,5 @@ export const CollectionCard = ({
     </div>
   );
 };
+
+CollectionCard.Loading = CollectionCardLoader;
