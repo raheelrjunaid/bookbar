@@ -7,6 +7,7 @@ import { trpc } from "../utils/trpc";
 
 export const Search = () => {
   const router = useRouter();
+  const utils = trpc.useContext();
   const query = router.query.q as string;
   const pageNumber = parseInt(router.query.pageNumber as string);
   useEffect(() => {
@@ -20,6 +21,23 @@ export const Search = () => {
       keepPreviousData: true,
     }
   );
+
+  const deleteCollectionMutation = trpc.useMutation(["collection.delete"], {
+    async onMutate({ id: removedCollectionId }) {
+      utils.setQueryData(
+        ["collection.search", { q: query, pageNumber }],
+        (oldData: any) => {
+          if (!oldData) return;
+          return {
+            ...oldData,
+            collections: oldData.collections.filter(
+              ({ id }: { id: string }) => id !== removedCollectionId
+            ),
+          };
+        }
+      );
+    },
+  });
 
   return (
     <>
@@ -42,6 +60,7 @@ export const Search = () => {
                 title={title}
                 user={user}
                 collectionId={id}
+                handleRemove={() => deleteCollectionMutation.mutate({ id })}
               />
             ))}
             {results.totalPages > 1 && (
