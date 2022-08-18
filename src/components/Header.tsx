@@ -86,14 +86,14 @@ export const Header = () => {
   }, [session, userData?.slug]);
 
   return (
-    <header className="bg-white shadow-xl shadow-gray-300/25 border-b border-gray-100 ">
-      <div className="flex px-5 py-3 gap-5 justify-between items-center container">
+    <header className="border-b border-gray-100 bg-white shadow-xl shadow-gray-300/25 ">
+      <div className="container flex items-center justify-between gap-5 px-5 py-3">
         <Menu as="div" className="relative md:hidden">
-          <Menu.Button className="rounded-md focus:outline-purple-400 flex items-center text-gray-900">
+          <Menu.Button className="flex items-center rounded-md text-gray-900 focus:outline-purple-400">
             {({ open }) => (!open ? <MenuIcon /> : <X />)}
           </Menu.Button>
 
-          <Menu.Items className="absolute z-50 top-11 divide-y divide-gray-100 rounded-md bg-white focus:outline-none border border-gray-100 shadow-lg shadow-gray-300/50 w-max">
+          <Menu.Items className="absolute top-11 z-50 w-max divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg shadow-gray-300/50 focus:outline-none">
             {navLinks.map(({ label, href, icon, callback }, index) => (
               <Menu.Item key={index}>
                 <NavLink
@@ -109,7 +109,7 @@ export const Header = () => {
 
         <div className="flex items-center gap-7">
           <Link href="/">
-            <div className="w-24 flex-none">
+            <div className="w-24 flex-none cursor-pointer">
               <svg
                 viewBox="0 0 90 30"
                 fill="none"
@@ -153,12 +153,12 @@ export const Header = () => {
             </Link>
           )}
         </div>
-        <div className="flex gap-5 items-center">
+        <div className="flex items-center gap-5">
           {router.pathname.startsWith("/search") ? (
-            <div className="flex items-center justify-between relative flex-shrink">
+            <div className="relative flex flex-shrink items-center justify-between">
               <input
                 type="text"
-                className="border-b border-0 transition border-gray-600 py-1  pl-8 focus:ring-0 peer w-full"
+                className="peer w-full border-0 border-b border-gray-600  py-1 pl-8 transition focus:ring-0"
                 placeholder="Search"
                 value={router.query.q ?? ""}
                 onChange={(e) => {
@@ -171,19 +171,19 @@ export const Header = () => {
                   );
                 }}
               />
-              <div className="absolute flex transition items-center peer-focus:text-purple-500 text-gray-900">
+              <div className="absolute flex items-center text-gray-900 transition peer-focus:text-purple-500">
                 <Search aria-hidden="true" size={22} />
               </div>
             </div>
           ) : (
             <Link href="/search">
-              <Search className="text-gray-800" />
+              <Search className="cursor-pointer text-gray-800" />
             </Link>
           )}
           {!!session?.user ? (
             <Menu as="div" className="relative hidden md:block">
-              <Menu.Button className="rounded-md focus:outline-purple-400 flex items-center text-gray-900">
-                <div className="w-8 aspect-square overflow-hidden rounded-full relative cursor-pointer">
+              <Menu.Button className="flex items-center rounded-md text-gray-900 focus:outline-purple-400">
+                <div className="relative aspect-square w-8 cursor-pointer overflow-hidden rounded-full">
                   <Image
                     src={
                       session.user.image ||
@@ -200,7 +200,7 @@ export const Header = () => {
                 </div>
               </Menu.Button>
 
-              <Menu.Items className="absolute z-50 right-0 top-11 divide-y divide-gray-100 rounded-md bg-white focus:outline-none border border-gray-100 shadow-lg shadow-gray-300/50 w-max">
+              <Menu.Items className="absolute right-0 top-11 z-50 w-max divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg shadow-gray-300/50 focus:outline-none">
                 {navLinks
                   .slice(2)
                   .map(({ label, href, icon, callback }, index) => (
@@ -216,7 +216,7 @@ export const Header = () => {
               </Menu.Items>
             </Menu>
           ) : (
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden items-center gap-3 md:flex">
               <Button variant="outline" onClick={() => signIn()}>
                 Log In
               </Button>
@@ -233,7 +233,7 @@ const NavLink = ({ href, icon, label, callback }: NavLinkProps) =>
   href ? (
     <Link href={href} passHref>
       <a
-        className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2"
+        className="flex items-center gap-2 py-3 px-5 text-gray-900 hover:text-gray-700"
         onClick={callback}
       >
         {cloneElement(icon as ReactElement, {
@@ -245,7 +245,7 @@ const NavLink = ({ href, icon, label, callback }: NavLinkProps) =>
     </Link>
   ) : (
     <div
-      className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2 cursor-pointer"
+      className="flex cursor-pointer items-center gap-2 py-3 px-5 text-gray-900 hover:text-gray-700"
       onClick={callback}
     >
       {cloneElement(icon as ReactElement, {

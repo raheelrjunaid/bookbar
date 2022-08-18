@@ -156,8 +156,8 @@ export default function Collection() {
                 className={`rounded-full
               ${
                 isFavourited
-                  ? "bg-gray-200 text-gray-800"
-                  : "bg-red-200 !text-red-800"
+                  ? "bg-gray-200 text-gray-800 !ring-gray-200 hover:bg-gray-300 hover:shadow-none"
+                  : "bg-red-200 !text-red-800 !ring-red-200 hover:bg-red-300 hover:shadow-none"
               }
               `}
               >
@@ -169,7 +169,7 @@ export default function Collection() {
                 rightIcon={<Trash />}
                 loading={deleteMutation.isLoading}
                 compact
-                className="rounded-full bg-red-600"
+                className="rounded-full bg-red-600 hover:bg-red-700 hover:shadow-none focus:ring-red-500"
               >
                 Delete
               </Button>

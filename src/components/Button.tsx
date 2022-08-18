@@ -28,9 +28,11 @@ export const Button = ({
   <button
     {...props}
     className={classnames(
-      "font-medium py-2 px-4 flex gap-2 items-center justify-center",
-      variant === "primary" && "bg-purple-600 text-white",
-      variant === "outline" && "text-gray-800 border border-gray-800",
+      "flex items-center justify-center gap-2 py-2 px-4 font-medium ring-gray-500 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2",
+      variant === "primary" &&
+        "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-200 focus:ring-purple-500 ",
+      variant === "outline" &&
+        "border border-gray-800 text-gray-800 ring-gray-400 hover:bg-gray-100",
       props.disabled && "cursor-not-allowed opacity-60 saturate-0",
       loading && "cursor-not-allowed opacity-60",
       size === "lg" && "py-3 px-5 text-lg",

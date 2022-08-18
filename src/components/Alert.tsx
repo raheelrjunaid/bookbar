@@ -10,7 +10,7 @@ export const Alert = ({
   showAction?: boolean;
 }) => {
   return (
-    <div className="rounded-md bg-red-50 p-4 mt-14">
+    <div className="mt-14 rounded-md bg-red-50 p-4">
       <div className="flex">
         <div className="flex-shrink-0">
           <X className="text-red-400" aria-hidden="true" />
@@ -22,7 +22,7 @@ export const Alert = ({
               <Button
                 size="sm"
                 variant="subtle"
-                className="bg-red-100 text-red-800 rounded-md"
+                className="rounded-md bg-red-100 text-red-800 ring-red-700"
               >
                 Back to Home
               </Button>

@@ -17,14 +17,14 @@ export const Pagination = ({
 
   return (
     <nav
-      className="px-4 py-3 flex items-center md:justify-center justify-between border-t border-gray-200 sm:px-6 gap-6"
+      className="flex items-center justify-between gap-6 border-t border-gray-200 px-4 py-3 sm:px-6 md:justify-center"
       aria-label="Pagination"
     >
       {pageNumber !== 1 ? (
         <Button
           leftIcon={<ArrowLeft />}
           variant="subtle"
-          className="px-0 text-gray-500"
+          className="px-0 text-gray-500 hover:text-gray-900"
           onClick={() => router.push(`${basePath}pageNumber=${pageNumber - 1}`)}
         >
           Previous
@@ -36,7 +36,7 @@ export const Pagination = ({
         <Button
           rightIcon={<ArrowRight />}
           variant="subtle"
-          className="px-0 text-gray-500"
+          className="px-0 text-gray-500 hover:text-gray-900"
           onClick={() => router.push(`${basePath}pageNumber=${pageNumber + 1}`)}
         >
           Next

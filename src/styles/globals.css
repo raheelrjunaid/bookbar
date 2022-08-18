@@ -8,7 +8,11 @@
   input[type="text"],
   input[type="email"],
   textarea {
-    @apply focus:border-purple-500 focus:ring-purple-500 focus:outline-none transition;
+    @apply transition focus:border-purple-500 focus:outline-none focus:ring-purple-500;
+  }
+
+  a {
+    @apply rounded-sm ring-purple-500 transition focus:outline-none focus:ring-1;
   }
 }
 
