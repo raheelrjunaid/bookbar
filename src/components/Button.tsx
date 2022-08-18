@@ -1,5 +1,6 @@
 import React, { cloneElement, ReactElement } from "react";
 import { Oval } from "react-loader-spinner";
+import classnames from "classnames";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -26,17 +27,17 @@ export const Button = ({
 }: ButtonProps) => (
   <button
     {...props}
-    className={`
-        font-medium py-2 px-4 flex gap-2 items-center justify-center
-        ${variant === "primary" && "bg-purple-600 text-white"}
-        ${variant === "outline" && "text-gray-800 border border-gray-800"}
-        ${props.disabled && "cursor-not-allowed opacity-60 saturate-0"}
-        ${loading && "cursor-not-allowed opacity-60"}
-        ${size === "lg" && "py-3 px-5 text-lg"}
-        ${size === "sm" && "text-sm"}
-        ${(compact || size === "sm") && "py-1 px-2"}
-        ${className}
-    `}
+    className={classnames(
+      "font-medium py-2 px-4 flex gap-2 items-center justify-center",
+      variant === "primary" && "bg-purple-600 text-white",
+      variant === "outline" && "text-gray-800 border border-gray-800",
+      props.disabled && "cursor-not-allowed opacity-60 saturate-0",
+      loading && "cursor-not-allowed opacity-60",
+      size === "lg" && "py-3 px-5 text-lg",
+      size === "sm" && "text-sm",
+      (compact || size === "sm") && "py-1 px-2",
+      className
+    )}
   >
     {leftIcon &&
       cloneElement(leftIcon as ReactElement, {
@@ -45,8 +46,8 @@ export const Button = ({
     {children}
     {loading ? (
       <Oval
-        height={22}
-        width={22}
+        height={size === "lg" ? 22 : 20}
+        width={size === "lg" ? 22 : 20}
         color="#fff"
         secondaryColor="#eee"
         ariaLabel="oval-loading"
