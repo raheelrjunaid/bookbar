@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { trpc } from "../../utils/trpc";
 import Divider from "../../components/Divider";
 import { CollectionCard } from "../../components/CollectionCard";
@@ -7,31 +7,40 @@ import Link from "next/link";
 import Button from "../../components/Button";
 import { Edit, Plus } from "tabler-icons-react";
 import { useRouter } from "next/router";
+import Pagination from "../../components/Pagination";
 
-export default function UserPage({ data: initialData }: { data: any }) {
+export default function UserPage() {
   const { data: session } = useSession();
   const utils = trpc.useContext();
-  const slug = useRouter().query.slug as string;
+  const router = useRouter();
+  const slug = router.query.slug as string;
+  const pageNumber = parseInt(router.query.pageNumber as string);
+
+  useEffect(() => {
+    if (!pageNumber) router.push(`/user/${slug}?pageNumber=1`);
+  }, [router, pageNumber, slug]);
 
   const { data, isLoading } = trpc.useQuery(
     [
       "collection.getAllByUserSlug",
       {
         userSlug: slug,
+        pageNumber,
       },
     ],
     {
-      initialData,
+      enabled: !!pageNumber,
+      keepPreviousData: true,
     }
   );
   const deleteCollectionMutation = trpc.useMutation(["collection.delete"], {
     async onMutate(deletedCollection) {
       await utils.cancelQuery([
         "collection.getAllByUserSlug",
-        { userSlug: slug },
+        { userSlug: slug, pageNumber },
       ]);
       utils.setQueryData(
-        ["collection.getAllByUserSlug", { userSlug: slug }],
+        ["collection.getAllByUserSlug", { userSlug: slug, pageNumber }],
         (oldData: any) => {
           if (!oldData) return;
           return {
@@ -46,7 +55,7 @@ export default function UserPage({ data: initialData }: { data: any }) {
     onSettled() {
       utils.invalidateQueries([
         "collection.getAllByUserSlug",
-        { userSlug: slug },
+        { userSlug: slug, pageNumber },
       ]);
     },
   });
@@ -98,6 +107,13 @@ export default function UserPage({ data: initialData }: { data: any }) {
           ))
         ) : (
           <h2 className="text-center text-gray-700">No collections found.</h2>
+        )}
+        {data?.totalPages && data?.totalPages > 1 && (
+          <Pagination
+            totalPages={data.totalPages}
+            basePath={`/user/${slug}?`}
+            pageNumber={pageNumber}
+          />
         )}
       </section>
     </>

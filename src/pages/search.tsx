@@ -1,16 +1,25 @@
 import { useRouter } from "next/router";
-import React from "react";
+import { useEffect } from "react";
 import { CollectionCard } from "../components/CollectionCard";
 import Divider from "../components/Divider";
+import Pagination from "../components/Pagination";
 import { trpc } from "../utils/trpc";
 
 export const Search = () => {
-  const query = useRouter().query.q as string;
-  const { data: results } = trpc.useQuery(["collection.search", { q: query }], {
-    enabled: !!query,
-    keepPreviousData: true,
-  });
-  console.log(results);
+  const router = useRouter();
+  const query = router.query.q as string;
+  const pageNumber = parseInt(router.query.pageNumber as string);
+  useEffect(() => {
+    if (!pageNumber) router.push(`/search/?q=${query || ""}&pageNumber=1`);
+  }, [pageNumber, query, router]);
+
+  const { data: results, isLoading } = trpc.useQuery(
+    ["collection.search", { q: query, pageNumber }],
+    {
+      enabled: !!query,
+      keepPreviousData: true,
+    }
+  );
 
   return (
     <>
@@ -19,16 +28,27 @@ export const Search = () => {
       </h1>
       <Divider />
       <section className="grid grid-cols-1 gap-4">
-        {results?.map(({ id, title, user, books }) => (
-          <CollectionCard
-            key={id}
-            bookCovers={books.map(({ cover }) => cover)}
-            searchQuery={query}
-            title={title}
-            user={user}
-            collectionId={id}
+        {isLoading
+          ? Array.from({ length: 10 }).map((_, i) => (
+              <CollectionCard.Loading key={i} />
+            ))
+          : results?.collections?.map(({ id, title, user, books }) => (
+              <CollectionCard
+                key={id}
+                bookCovers={books.map(({ cover }) => cover)}
+                searchQuery={query}
+                title={title}
+                user={user}
+                collectionId={id}
+              />
+            ))}
+        {results && results.totalPages > 1 && (
+          <Pagination
+            totalPages={results?.totalPages as number}
+            basePath={`/search?q=${query}&`}
+            pageNumber={pageNumber}
           />
-        ))}
+        )}
       </section>
     </>
   );

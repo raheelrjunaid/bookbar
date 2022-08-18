@@ -7,13 +7,32 @@ import Divider from "../components/Divider";
 import { Plus } from "tabler-icons-react";
 import Link from "next/link";
 import { CollectionCard } from "../components/CollectionCard";
+import Pagination from "../components/Pagination";
+import { useRouter } from "next/router";
+import { parse } from "path";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  const { data: collectionData, isLoading: collectionsLoading } = trpc.useQuery(
-    ["collection.getAll"]
-  );
+  const router = useRouter();
+  const pageNumber = router.query.pageNumber as string;
   const { status: sessionStatus } = useSession();
   const utils = trpc.useContext();
+  useEffect(() => {
+    if (!pageNumber) router.push(`/?pageNumber=1`);
+  }, [pageNumber, router]);
+
+  const { data: collectionData, isLoading: collectionsLoading } = trpc.useQuery(
+    [
+      "collection.getAll",
+      {
+        pageNumber: parseInt(pageNumber),
+      },
+    ],
+    {
+      enabled: !!pageNumber,
+      keepPreviousData: true,
+    }
+  );
   const deleteCollectionMutation = trpc.useMutation(["collection.delete"], {
     async onMutate(deletedCollection) {
       await utils.cancelQuery(["collection.getAll"]);
@@ -61,7 +80,7 @@ const Home: NextPage = () => {
           ? Array.from({ length: 9 }).map((_, i) => (
               <CollectionCard.Loading key={i} />
             ))
-          : collectionData?.map(({ id, title, user, books }) => (
+          : collectionData?.collections.map(({ id, title, user, books }) => (
               <CollectionCard
                 key={id}
                 collectionId={id}
@@ -71,6 +90,13 @@ const Home: NextPage = () => {
                 handleRemove={() => deleteCollectionMutation.mutate({ id })}
               />
             ))}
+        {collectionData?.totalPages && collectionData.totalPages > 1 && (
+          <Pagination
+            totalPages={collectionData.totalPages}
+            basePath="/?"
+            pageNumber={parseInt(pageNumber)}
+          />
+        )}
       </section>
 
       <section className="pt-10 flex justify-center">

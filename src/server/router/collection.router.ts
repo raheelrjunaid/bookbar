@@ -29,8 +29,15 @@ const isFavourited = async (
 
 export const collectionRouter = createRouter()
   .query("getAll", {
-    async resolve({ ctx: { prisma } }) {
-      return await prisma.collection.findMany({
+    input: z.object({
+      pageNumber: z.number(),
+    }),
+    async resolve({ ctx: { prisma }, input }) {
+      const collectionTotal = await prisma.collection.count();
+      const totalPages = Math.ceil(collectionTotal / 10);
+      const collections = await prisma.collection.findMany({
+        skip: (input.pageNumber - 1) * 10,
+        take: 10,
         include: {
           books: {
             select: {
@@ -47,11 +54,16 @@ export const collectionRouter = createRouter()
           },
         },
       });
+      return {
+        collections,
+        totalPages,
+      };
     },
   })
   .query("getAllByUserSlug", {
     input: z.object({
       userSlug: z.string(),
+      pageNumber: z.number(),
     }),
     async resolve({ ctx: { prisma }, input }) {
       const userData = await prisma.user.findUnique({
@@ -65,7 +77,17 @@ export const collectionRouter = createRouter()
           message: "User not found",
         });
       }
+      const collectionTotal = await prisma.collection.count({
+        where: {
+          user: {
+            slug: input.userSlug,
+          },
+        },
+      });
+      const totalPages = Math.ceil(collectionTotal / 10);
       const collections = await prisma.collection.findMany({
+        skip: (input.pageNumber - 1) * 10,
+        take: 10,
         where: {
           user: {
             slug: input.userSlug,
@@ -82,6 +104,7 @@ export const collectionRouter = createRouter()
       return {
         user: userData,
         collections,
+        totalPages,
       };
     },
   })
@@ -109,9 +132,23 @@ export const collectionRouter = createRouter()
   .query("search", {
     input: z.object({
       q: z.string(),
+      pageNumber: z.number(),
     }),
     async resolve({ ctx: { prisma }, input }) {
-      return await prisma.collection.findMany({
+      const collectionTotal = await prisma.collection.count({
+        where: {
+          title: {
+            search: input.q,
+          },
+          description: {
+            search: input.q,
+          },
+        },
+      });
+      const totalPages = Math.ceil(collectionTotal / 10);
+      const collections = await prisma.collection.findMany({
+        skip: (input.pageNumber - 1) * 10,
+        take: 10,
         where: {
           title: {
             search: input.q,
@@ -136,6 +173,10 @@ export const collectionRouter = createRouter()
           },
         },
       });
+      return {
+        collections,
+        totalPages,
+      };
     },
   })
   .query("isFavourited", {
