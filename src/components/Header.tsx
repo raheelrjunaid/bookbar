@@ -150,8 +150,21 @@ export const Header = () => {
   );
 };
 
-const NavLink = ({ href, icon, label, callback }: NavLinkProps) => (
-  <Link href={href || ""} passHref>
+const NavLink = ({ href, icon, label, callback }: NavLinkProps) =>
+  href ? (
+    <Link href={href} passHref>
+      <a
+        className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2"
+        onClick={callback}
+      >
+        {cloneElement(icon as ReactElement, {
+          className: "text-gray-400",
+          size: 20,
+        })}
+        {label}
+      </a>
+    </Link>
+  ) : (
     <a
       className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2"
       onClick={callback}
@@ -162,7 +175,6 @@ const NavLink = ({ href, icon, label, callback }: NavLinkProps) => (
       })}
       {label}
     </a>
-  </Link>
-);
+  );
 
 export default Header;
