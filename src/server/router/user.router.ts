@@ -60,6 +60,12 @@ export const userRouter = createProtectedRouter()
                 message: error.message,
               });
             }
+            await prisma.user.update({
+              where: { id: session.user.id },
+              data: {
+                image: null,
+              },
+            });
           }
         );
       }
