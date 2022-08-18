@@ -3,17 +3,32 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { SessionProvider } from "next-auth/react";
+import { getSession, SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ReactQueryDevtools } from "react-query/devtools";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const verifyName = async () => {
+      const session = await getSession();
+      console.log(session);
+      if (session?.user && !session.user.name) {
+        router.push("/auth/new-user");
+      }
+    };
+    if (router.pathname !== "/auth/new-user") verifyName();
+  }, [router]);
+
   return (
     <SessionProvider session={session}>
       <Head>
@@ -29,7 +44,7 @@ const MyApp: AppType = ({
         <meta name="author" content="Raheel Junaid" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      <div className="min-h-screen min-w-screen grid grid-rows-[auto_1fr_auto] relative">
+      <div className="min-w-screen relative grid min-h-screen grid-rows-[auto_1fr_auto]">
         <Header />
         <main className="container">
           <Component {...pageProps} />

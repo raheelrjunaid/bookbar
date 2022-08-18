@@ -9,6 +9,7 @@ import Button from "../../components/Button";
 import { useState } from "react";
 import cloudinary from "../../utils/cloudinary";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
 
 export const NewUser: NextPage = () => {
   const { data: userData } = trpc.useQuery(["user.getUser"]);
@@ -23,6 +24,9 @@ export const NewUser: NextPage = () => {
   });
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const { data: _session } = useSession({
+    required: true,
+  });
 
   const updateAccountMutation = trpc.useMutation(["user.updateProfile"]);
 
@@ -90,13 +94,13 @@ export const NewUser: NextPage = () => {
 
           router.push("/user/manage");
         })}
-        className="pt-14 max-w-sm mx-auto"
+        className="mx-auto max-w-sm pt-14"
       >
         <div>
-          <h1 className="text-gray-900 font-serif text-4xl mb-2">
+          <h1 className="mb-2 font-serif text-4xl text-gray-900">
             Let&apos;s get started:
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="mb-8 text-gray-600">
             We need some basic information to get you started.
           </p>
         </div>
@@ -105,7 +109,7 @@ export const NewUser: NextPage = () => {
             htmlFor="image"
             className="relative aspect-square w-16 overflow-hidden rounded-full"
           >
-            <div className="absolute inset-0 text-white bg-black/25 z-10 flex items-center justify-center">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25 text-white">
               <Edit />
             </div>
             <Image
@@ -149,14 +153,14 @@ export const NewUser: NextPage = () => {
             errors={errors}
             name="name"
             render={({ message }) => (
-              <p className="text-red-500 text-sm text-center">{message}</p>
+              <p className="text-center text-sm text-red-500">{message}</p>
             )}
           />
           <ErrorMessage
             errors={errors}
             name="image"
             render={({ message }) => (
-              <p className="text-red-500 text-sm text-center">{message}</p>
+              <p className="text-center text-sm text-red-500">{message}</p>
             )}
           />
         </div>

@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -18,6 +19,9 @@ export const VerifyEmail: NextPage = () => {
     },
   });
   const { token } = router.query;
+  const { data: _session } = useSession({
+    required: true,
+  });
 
   if (token && !verifying) {
     console.log("request sent");
@@ -48,7 +52,7 @@ export const VerifyEmail: NextPage = () => {
       <Head>
         <title>Redirecting...</title>
       </Head>
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex h-screen flex-col items-center justify-center">
         <InfinitySpin color="#a855f7)" />;
       </div>
     </>

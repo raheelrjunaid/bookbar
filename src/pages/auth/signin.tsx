@@ -22,7 +22,7 @@ export const SignIn: NextPage = () => {
   const router = useRouter();
   const [modalOpened, setModalOpened] = useState(false);
 
-  if (session) router.push("/");
+  if (session) router.push((router.query.callbackUrl as string) || "/");
 
   const onSubmit = ({ email }: { email: string }) => {
     signIn("email", {
@@ -39,13 +39,13 @@ export const SignIn: NextPage = () => {
       </Head>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col max-w-sm mt-14 gap-4 mx-auto"
+        className="mx-auto mt-14 flex max-w-sm flex-col gap-4"
       >
-        <div className="text-center mb-6">
-          <h1 className="mt-1 text-4xl font-serif text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+        <div className="mb-6 text-center">
+          <h1 className="mt-1 font-serif text-4xl text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
             Welcome
           </h1>
-          <p className="max-w-xl mt-3 mx-auto text-lg sm:text-xl text-gray-500">
+          <p className="mx-auto mt-3 max-w-xl text-lg text-gray-500 sm:text-xl">
             Login to access your account and start adding posts
           </p>
         </div>
@@ -75,7 +75,7 @@ export const SignIn: NextPage = () => {
           errors={errors}
           name="email"
           render={({ message }) => (
-            <p className="text-red-500 text-center">{message}</p>
+            <p className="text-center text-red-500">{message}</p>
           )}
         />
         <Button type="submit">Sign in</Button>

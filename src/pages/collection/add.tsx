@@ -5,11 +5,11 @@ import { Check, X } from "tabler-icons-react";
 import BookSearch from "../../components/BookSearch";
 import Button from "../../components/Button";
 import Book from "../../components/Book";
-import Divider from "../../components/Divider";
 import BookProps from "../../types/bookProps";
 import { trpc } from "../../utils/trpc";
 import { useForm } from "react-hook-form";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
 
 export const AddCollection: NextPage = () => {
   const router = useRouter();
@@ -26,6 +26,9 @@ export const AddCollection: NextPage = () => {
     clearErrors,
     formState: { errors },
   } = useForm();
+  const { data: _session } = useSession({
+    required: true,
+  });
 
   const onSubmit = ({
     title,
@@ -97,21 +100,29 @@ export const AddCollection: NextPage = () => {
           </div>
         </form>
         <div className="grid grid-cols-1 gap-6 xl:col-span-2 xl:grid-cols-2">
-          {selectedBooks.map((book: BookProps) => (
-            <Book
-              key={book.id}
-              id={book.id}
-              title={book.title}
-              authors={book.authors}
-              avgRating={book.avgRating}
-              cover={book.cover}
-              link={book.link}
-              description={book.description}
-              handleRemove={() => {
-                setSelectedBooks(selectedBooks.filter((b) => b.id !== book.id));
-              }}
-            />
-          ))}
+          {selectedBooks.length > 0 ? (
+            selectedBooks.map((book: BookProps) => (
+              <Book
+                key={book.id}
+                id={book.id}
+                title={book.title}
+                authors={book.authors}
+                avgRating={book.avgRating}
+                cover={book.cover}
+                link={book.link}
+                description={book.description}
+                handleRemove={() => {
+                  setSelectedBooks(
+                    selectedBooks.filter((b) => b.id !== book.id)
+                  );
+                }}
+              />
+            ))
+          ) : (
+            <h2 className="col-span-full text-center text-gray-700">
+              Don&apos;t be shy... import some books!
+            </h2>
+          )}
         </div>
       </section>
     </>

@@ -9,8 +9,9 @@ import Link from "next/link";
 import { Popover } from "@headlessui/react";
 import Image from "next/image";
 import cloudinary from "../../utils/cloudinary";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
 
 export const Manage: NextPage = () => {
   const {
@@ -22,6 +23,9 @@ export const Manage: NextPage = () => {
   } = useForm();
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const { data: _session } = useSession({
+    required: true,
+  });
 
   const filePreviewHandler = (fileArray: FileList | null) => {
     if (fileArray?.length) {
