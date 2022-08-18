@@ -165,8 +165,8 @@ const NavLink = ({ href, icon, label, callback }: NavLinkProps) =>
       </a>
     </Link>
   ) : (
-    <a
-      className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2"
+    <div
+      className="flex items-center text-gray-900 hover:text-gray-700 py-3 px-5 gap-2 cursor-pointer"
       onClick={callback}
     >
       {cloneElement(icon as ReactElement, {
@@ -174,7 +174,7 @@ const NavLink = ({ href, icon, label, callback }: NavLinkProps) =>
         size: 20,
       })}
       {label}
-    </a>
+    </div>
   );
 
 export default Header;
