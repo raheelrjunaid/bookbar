@@ -42,6 +42,7 @@ const MyApp: AppType = ({
         />
         <meta name="author" content="Raheel Junaid" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
       </Head>
       <div className="min-w-screen relative grid min-h-screen grid-rows-[auto_1fr_auto]">
         <Header />
