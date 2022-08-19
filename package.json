@@ -9,6 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "nuke": "ts-node --esm prisma/nuke.ts",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
@@ -27,6 +28,7 @@
     "@trpc/react": "^9.27.0",
     "@trpc/server": "^9.27.0",
     "@types/nodemailer": "^6.4.5",
+    "@types/react-highlight-words": "^0.16.4",
     "axios": "^0.27.2",
     "classnames": "^2.3.1",
     "cloudinary": "^1.30.1",

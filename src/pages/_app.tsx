@@ -21,7 +21,6 @@ const MyApp: AppType = ({
   useEffect(() => {
     const verifyName = async () => {
       const session = await getSession();
-      console.log(session);
       if (session?.user && !session.user.name) {
         router.push("/auth/new-user");
       }

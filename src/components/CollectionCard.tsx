@@ -12,6 +12,7 @@ import Highlighter from "react-highlight-words";
 import cloudinary from "../utils/cloudinary";
 import { CollectionCardLoader } from "./loaders/CollectionCardLoader";
 import { User } from "@prisma/client";
+import { useEffect, useState } from "react";
 
 interface CollectionCardProps {
   bookCovers: (string | null)[];
@@ -33,6 +34,14 @@ export const CollectionCard = ({
   const { data: session } = useSession();
   const router = useRouter();
   const utils = trpc.useContext();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const prefersReducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion)"
+    ).matches;
+    setPrefersReducedMotion(prefersReducedMotionQuery);
+  }, []);
 
   // Make sure all book covers exist
   let newBookCovers = bookCovers.filter(
@@ -68,10 +77,10 @@ export const CollectionCard = ({
   });
 
   return (
-    <div className="flex flex-col shadow-lg shadow-gray-200 border border-t-0 border-gray-200 relative">
-      <Marquee gradientColor={[229, 231, 235]} gradientWidth={0}>
+    <div className="relative flex flex-col border border-t-0 border-gray-200 shadow-lg shadow-gray-200">
+      <Marquee gradientWidth={0} speed={prefersReducedMotion ? 0 : 20}>
         {newBookCovers.map((cover, index) => (
-          <div className="shadow-md flex-none w-16 h-24 relative" key={index}>
+          <div className="relative h-24 w-16 flex-none shadow-md" key={index}>
             <Image
               src={cover}
               layout="fill"
@@ -82,13 +91,13 @@ export const CollectionCard = ({
           </div>
         ))}
       </Marquee>
-      <span className="flex z-10 top-2 right-2 items-center px-2.5 py-0.5 rounded-full text-xs shadow-md bg-gray-900/75 text-white absolute">
+      <span className="absolute top-2 right-2 z-10 flex items-center rounded-full bg-gray-900/75 px-2.5 py-0.5 text-xs text-white shadow-md">
         {bookCovers.length} Book{bookCovers.length === 1 ? "" : "s"}
       </span>
-      <div className="p-4 space-y-2">
+      <div className="space-y-2 p-4">
         <div className="flex items-center gap-3">
           <Link href={`/user/${user.slug}`}>
-            <div className="flex-none w-10 aspect-square overflow-hidden rounded-full relative cursor-pointer">
+            <div className="relative aspect-square w-10 flex-none cursor-pointer overflow-hidden rounded-full">
               <Image
                 src={
                   user.image ||
@@ -106,7 +115,7 @@ export const CollectionCard = ({
           </Link>
           <div>
             <Link href={`/collection/${collectionId}`} passHref>
-              <a className="font-medium text-gray-900 line-clamp-1 hover:underline -mb-1">
+              <a className="-mb-1 font-medium text-gray-900 line-clamp-1 hover:underline">
                 <Highlighter
                   highlightClassName="bg-gradient-to-t from-yellow-200 to-yellow-100 rounded-sm border border-yellow-200"
                   searchWords={searchQuery?.split(" ") || []}
@@ -116,13 +125,13 @@ export const CollectionCard = ({
               </a>
             </Link>
             <Link href={`/user/${user.slug}`} passHref>
-              <a className="text-gray-500 text-sm hover:underline">
+              <a className="text-sm text-gray-500 hover:underline">
                 {user.name}
               </a>
             </Link>
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           {avgRating?._avg.rating ? (
             <Rating readonly ratingValue={avgRating._avg.rating} />
           ) : ratingLoading ? (
@@ -132,7 +141,7 @@ export const CollectionCard = ({
           )}
           <div className="flex items-center gap-3">
             <Link href={`/collection/${collectionId}`} passHref>
-              <a className="font-medium hover:underline text-purple-600">
+              <a className="font-medium text-purple-600 hover:underline">
                 View Full
               </a>
             </Link>
