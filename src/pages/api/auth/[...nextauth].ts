@@ -7,9 +7,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 import { env } from "../../../env/server.mjs";
 import slugify from "slugify";
-import { readFileSync } from "fs";
-import path from "path";
-import Handlebars from "handlebars";
 import transporter from "../../../utils/transporter";
 
 export const authOptions: NextAuthOptions = {
@@ -38,8 +35,8 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       profile({ sub, name, email, picture }) {
         return {
           id: sub,

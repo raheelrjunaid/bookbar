@@ -8,6 +8,6 @@ export const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_SERVER_PASSWORD,
   },
   secure: true,
-});
+} as { host: string });
 
 export default transporter;

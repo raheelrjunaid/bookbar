@@ -38,7 +38,9 @@ export const SignIn: NextPage = () => {
         <title>Sign In | BookBar</title>
       </Head>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(
+          onSubmit as { email: string } & SubmitHandler<FieldValues>
+        )}
         className="mx-auto mt-14 flex max-w-sm flex-col gap-4"
       >
         <div className="mb-6 text-center">
