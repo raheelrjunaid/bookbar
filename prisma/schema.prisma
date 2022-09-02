@@ -32,7 +32,7 @@ model Collection {
 }
 
 model Book {
-  id          String       @id
+  isbn        String       @id
   title       String
   authors     String?
   description String?      @db.Text
