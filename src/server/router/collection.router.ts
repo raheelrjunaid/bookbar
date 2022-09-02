@@ -249,11 +249,9 @@ export const collectionRouter = createRouter()
         z.object({
           id: z.string(),
           title: z.string(),
-          authors: z.string().nullish(),
-          description: z.string().nullish(),
-          cover: z.string().nullish(),
-          link: z.string(),
-          avgRating: z.number().nullish(),
+          author: z.string().nullish(),
+          subtitle: z.string().nullish(),
+          cover_key: z.string().nullish(),
         })
       ),
     }),
@@ -283,7 +281,6 @@ export const collectionRouter = createRouter()
             where: { id: book.id },
             create: {
               ...book,
-              authors: book.authors,
               collections: {
                 connect: {
                   id: collection.id,

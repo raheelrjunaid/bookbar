@@ -60,10 +60,14 @@ export const CollectionCard = ({
     <div className="relative flex flex-col border border-t-0 border-gray-200 shadow-md shadow-gray-100 transition hover:shadow-lg">
       <div className="relative flex overflow-x-hidden">
         {books.map((book, index) => (
-          <div className="group relative" key={index}>
-            <div className="relative h-24 w-16 flex-none cursor-pointer transition  group-hover:brightness-50">
+          <div className="group relative cursor-pointer " key={index}>
+            <div className="relative h-24 w-16 flex-none transition  group-hover:brightness-50">
               <Image
-                src={book.cover || "/image-not-found"}
+                src={
+                  `https://covers.openlibrary.org/b/OLID/${
+                    book.cover_key || book.id
+                  }-M.jpg` || "/image-not-found"
+                }
                 layout="fill"
                 objectFit="cover"
                 objectPosition="center"

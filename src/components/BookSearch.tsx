@@ -3,20 +3,17 @@ import { useState } from "react";
 import { Combobox } from "@headlessui/react";
 import { Search } from "tabler-icons-react";
 import { useQuery } from "react-query";
-import debounce from "just-debounce-it";
+import { debounce } from "radash";
 import Image from "next/image";
 import BookProps from "../types/bookProps";
 
-interface GoogleBooksAPIResult {
-  id: string;
-  volumeInfo: {
-    title: string;
-    description?: string;
-    imageLinks?: { smallThumbnail: string };
-    canonicalVolumeLink: string;
-    authors?: string[];
-    averageRating: number;
-  };
+interface OpenLibraryAPIResult {
+  lending_edition_s: string;
+  subtitle: string;
+  title: string;
+  author_name?: string[];
+  cover_edition_key?: string;
+  [key: string]: any;
 }
 
 export const BookSearch = ({
@@ -25,17 +22,21 @@ export const BookSearch = ({
   addToCollection: (props: BookProps) => void;
 }) => {
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
   const { data, isLoading } = useQuery(
-    ["books", debouncedQuery],
+    ["books", query],
     async () => {
-      if (!debouncedQuery) return;
+      if (!query) return;
       const res = await fetch(
-        "https://www.googleapis.com/books/v1/volumes?q=" +
-          new URLSearchParams({ q: query, maxResults: "3" }).toString()
+        "https://openlibrary.org/search.json?" +
+          new URLSearchParams({
+            q: query,
+            limit: "3",
+            _spellcheck_count: "0",
+            mode: "everything",
+          }).toString()
       );
       if (!res.ok) {
-        throw new Error(res.statusText);
+        console.error(res);
       }
       return res.json();
     },
@@ -45,82 +46,81 @@ export const BookSearch = ({
   );
 
   return (
-    <Combobox value={null} onChange={addToCollection} nullable>
+    <Combobox
+      value={null}
+      onChange={addToCollection}
+      nullable
+      as="div"
+      className="flex flex-col gap-1"
+    >
       <div className="relative">
         <Combobox.Input
-          className="w-full pl-9 peer"
+          className="peer w-full pl-9"
           placeholder="Search for a book..."
-          onChange={(event) => {
+          onChange={debounce({ delay: 200 }, (event) => {
             if (!event.target.value) return;
             setQuery(event.target.value);
-            debounce(
-              (value: string) => (value ? setDebouncedQuery(value) : null),
-              200
-            )(event.target.value);
-          }}
+          })}
           displayValue={() => ""}
         />
-        <Combobox.Button className="absolute inset-y-0 left-2.5 peer-focus:text-purple-500 text-gray-400">
+        <Combobox.Button className="absolute inset-y-0 left-2.5 text-gray-400 peer-focus:text-purple-500">
           <Search aria-hidden="true" size={22} />
         </Combobox.Button>
-        <Combobox.Options className="bg-white absolute mt-1 w-full z-10 overflow-hidden rounded-md shadow-lg shadow-gray-300/50 border border-gray-200">
+        <Combobox.Options className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg shadow-gray-300/50">
           {isLoading || !data ? (
-            <div className="py-2 px-4 bg-gray-100">Loading...</div>
+            <div className="bg-gray-100 py-2 px-4">Loading...</div>
           ) : (
-            data.items.map(
+            data.docs.map(
               ({
-                id,
-                volumeInfo: {
-                  title,
-                  description,
-                  imageLinks,
-                  authors,
-                  canonicalVolumeLink,
-                  averageRating,
-                },
-              }: GoogleBooksAPIResult) => (
+                lending_edition_s,
+                subtitle,
+                title,
+                author_name,
+                cover_edition_key,
+              }: OpenLibraryAPIResult) => (
                 <Combobox.Option
-                  key={id}
+                  key={lending_edition_s}
                   className={({ active }) =>
-                    `relative cursor-pointer min-h-[5rem] py-2 px-4 ${
+                    `relative min-h-[5rem] cursor-pointer py-2 px-4 ${
                       active && "bg-purple-600 text-white"
                     }`
                   }
                   value={
                     {
-                      id,
                       title,
-                      description,
-                      authors: authors?.join(", "),
-                      avgRating: averageRating,
-                      cover: imageLinks?.smallThumbnail,
-                      link: canonicalVolumeLink,
+                      id: lending_edition_s,
+                      subtitle,
+                      author: author_name?.[0],
+                      cover_key: cover_edition_key,
                     } as BookProps
                   }
                 >
                   {({ active }) => (
                     <div className="flex items-center gap-4">
-                      {imageLinks?.smallThumbnail && (
-                        <div className="shadow-md flex-none w-10">
-                          <Image
-                            src={imageLinks.smallThumbnail}
-                            layout="responsive"
-                            width={50}
-                            height={80}
-                            alt={title}
-                          />
-                        </div>
-                      )}
+                      <div className="w-10 flex-none shadow-md">
+                        <Image
+                          src={
+                            `https://covers.openlibrary.org/b/OLID/${
+                              cover_edition_key || lending_edition_s
+                            }-S.jpg` || "/image-not-found"
+                          }
+                          layout="responsive"
+                          width={50}
+                          height={80}
+                          alt={title}
+                        />
+                      </div>
                       <div>
                         <span className="font-semibold line-clamp-1">
                           {title}
                         </span>
                         <p
-                          className={`line-clamp-1 text-gray-500 text-sm ${
+                          className={`text-sm text-gray-500 line-clamp-1 ${
                             active && "text-inherit"
                           }`}
                         >
-                          {description}
+                          {subtitle && subtitle + " "}by{" "}
+                          {author_name?.[0] || "N/A"}
                         </p>
                       </div>
                     </div>
@@ -131,15 +131,15 @@ export const BookSearch = ({
           )}
         </Combobox.Options>
       </div>
-      <p className="-mt-3 text-sm text-gray-500">
+      <p className="text-sm text-gray-500">
         Powered by{" "}
         <a
           className="text-purple-500 hover:underline"
           rel="noopener noreferrer"
           target="_blank"
-          href="http://books.google.com/"
+          href="http://openlibrary.org"
         >
-          Google Books
+          Open Library
         </a>
       </p>
     </Combobox>

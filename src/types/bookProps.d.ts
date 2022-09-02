@@ -1,10 +1,8 @@
 export default interface BookProps {
   id: string;
-  cover?: string;
   title: string;
-  authors?: string;
-  avgRating?: number;
-  link: string;
-  description?: string;
+  cover_key?: string;
+  author?: string;
+  subtitle?: string;
   handleRemove?: (id: string) => void;
 }

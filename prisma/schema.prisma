@@ -32,13 +32,11 @@ model Collection {
 }
 
 model Book {
-  isbn        String       @id
+  id          String       @id
   title       String
-  authors     String?
-  description String?      @db.Text
-  cover       String?
-  avgRating   Float?
-  link        String
+  author      String
+  subtitle    String?      @db.Text
+  cover_key   String?
   collections Collection[]
 }
 

@@ -220,13 +220,11 @@ export default function Collection() {
             {data.books.map((book) => (
               <Book
                 key={book.id}
-                link={book.link}
                 id={book.id}
-                cover={book.cover as string | undefined}
+                cover_key={book.cover_key}
                 title={book.title}
-                authors={book.authors as string | undefined}
-                avgRating={book.avgRating as number | undefined}
-                description={book.description as string | undefined}
+                author={book.author as string | undefined}
+                subtitle={book.subtitle as string | undefined}
               />
             ))}
           </div>

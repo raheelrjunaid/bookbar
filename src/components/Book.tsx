@@ -3,23 +3,25 @@ import Link from "next/link";
 import { ExternalLink, Trash } from "tabler-icons-react";
 import Button from "./Button";
 import BookProps from "../types/bookProps";
-import Rating from "./Rating";
 
 export const Book = ({
-  cover,
+  id,
   title,
-  authors,
-  avgRating,
-  link,
-  description,
+  cover_key,
+  author,
+  subtitle,
   handleRemove,
 }: BookProps) => {
   return (
-    <div className="shadow-lg shadow-gray-200 border border-gray-200 flex gap-4 p-4">
-      <div className="flex-shrink-0 z-0">
-        <div className="shadow-md flex-none w-16 h-24 relative">
+    <div className="flex gap-4 border border-gray-200 p-4 shadow-md shadow-gray-100 transition hover:shadow-lg">
+      <div className="z-0 flex-shrink-0">
+        <div className="relative h-24 w-16 flex-none shadow-md">
           <Image
-            src={cover || "/image-not-found"}
+            src={
+              `https://covers.openlibrary.org/b/OLID/${
+                cover_key || id
+              }-M.jpg` || "/image-not-found"
+            }
             layout="fill"
             objectFit="cover"
             objectPosition="center"
@@ -29,25 +31,24 @@ export const Book = ({
       </div>
 
       <div className="text-gray-900">
-        <Link href={link} passHref>
+        <Link href={`https://openlibrary.org/works/${id}`} passHref>
           <a
-            className="text-lg font-semibold leading-snug mb-1 hover:underline"
+            className="mb-1 text-lg font-semibold leading-snug hover:underline"
             target="_blank"
           >
             {title}
           </a>
         </Link>
-        {authors && <p className="text-sm text-gray-600 mb-1">By: {authors}</p>}
-        {avgRating && <Rating ratingValue={avgRating} readonly />}
-        {description && <p className="line-clamp-2 mt-2">{description}</p>}
-        <div className="flex mt-3 items-center">
-          <Link href={link} passHref>
+        <p className="mb-1 text-sm text-gray-600">By: {author}</p>
+        {subtitle && <p className="mt-2 line-clamp-2">{subtitle}</p>}
+        <div className="mt-3 flex items-center">
+          <Link href={`https://openlibrary.org/works/${id}`} passHref>
             <a target="_blank">
               <Button
                 compact
                 variant="subtle"
                 rightIcon={<ExternalLink />}
-                className="underline underline-offset-1 text-purple-600 !pl-0"
+                className="!pl-0 text-purple-600 underline-offset-1 hover:underline"
               >
                 View Full
               </Button>

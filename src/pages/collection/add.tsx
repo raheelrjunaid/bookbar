@@ -7,12 +7,7 @@ import Button from "../../components/Button";
 import Book from "../../components/Book";
 import BookProps from "../../types/bookProps";
 import { trpc } from "../../utils/trpc";
-import {
-  FieldError,
-  FieldValues,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 
@@ -89,7 +84,7 @@ export const AddCollection: NextPage = () => {
             addToCollection={(bookData: BookProps) => {
               if (!bookData) return;
               if (selectedBooks.length > 0)
-                if (selectedBooks.find((b) => b.id === bookData.id)) return;
+                if (selectedBooks.find((b) => b.id === bookData.id)) return; // Book already added
               clearErrors("books");
               setSelectedBooks([...selectedBooks, bookData]);
             }}
@@ -117,11 +112,9 @@ export const AddCollection: NextPage = () => {
                 key={book.id}
                 id={book.id}
                 title={book.title}
-                authors={book.authors}
-                avgRating={book.avgRating}
-                cover={book.cover}
-                link={book.link}
-                description={book.description}
+                author={book.author}
+                cover_key={book.cover_key}
+                subtitle={book.subtitle}
                 handleRemove={() => {
                   setSelectedBooks(
                     selectedBooks.filter((b) => b.id !== book.id)
