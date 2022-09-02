@@ -35,7 +35,7 @@ export const Button = ({
         "border border-gray-800 text-gray-800 ring-gray-400 hover:bg-gray-100",
       props.disabled && "cursor-not-allowed opacity-60 saturate-0",
       loading && "cursor-not-allowed opacity-60",
-      size === "lg" && "py-3 px-5 text-lg",
+      size === "lg" && "py-2.5 px-5 text-lg",
       size === "sm" && "text-sm",
       (compact || size === "sm") && "py-1 px-3",
       className
