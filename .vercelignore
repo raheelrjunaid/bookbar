@@ -1,2 +1,2 @@
-prisma/seed.js
-prisma/nuke.js
+prisma/seed.ts
+prisma/nuke.ts
