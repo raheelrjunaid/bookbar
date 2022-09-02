@@ -51,7 +51,7 @@ export const BookSearch = ({
       onChange={addToCollection}
       nullable
       as="div"
-      className="flex flex-col gap-1"
+      className="relative flex flex-col gap-1"
     >
       <div className="relative">
         <Combobox.Input

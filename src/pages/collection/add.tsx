@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Check } from "tabler-icons-react";
 import BookSearch from "../../components/BookSearch";
 import Button from "../../components/Button";
@@ -15,6 +15,9 @@ export const AddCollection: NextPage = () => {
   const router = useRouter();
   const collectionMutation = trpc.useMutation(["collection.create"], {
     onSuccess({ id }) {
+      window.localStorage.removeItem("selectedBooks");
+      window.localStorage.removeItem("collectionTitle");
+      window.localStorage.removeItem("collectionDescription");
       router.push(`/collection/${id}`);
     },
   });
@@ -29,6 +32,13 @@ export const AddCollection: NextPage = () => {
   const { data: _session } = useSession({
     required: true,
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const books = JSON.parse(localStorage.getItem("selectedBooks") || "[]");
+      setSelectedBooks(books);
+    }
+  }, []);
 
   const onSubmit = ({
     title,
@@ -68,18 +78,38 @@ export const AddCollection: NextPage = () => {
           </h1>
           <input
             type="text"
+            defaultValue={
+              (typeof window !== "undefined" &&
+                localStorage.getItem("collectionTitle")) ||
+              ""
+            }
             placeholder="Collection Name"
             {...register("title", {
               required: "Collection title is required",
               maxLength: 20,
             })}
+            onChange={(e) => {
+              if (typeof window !== "undefined") {
+                localStorage.setItem("collectionTitle", e.target.value);
+              }
+              register("title").onChange(e);
+            }}
           />
           {errors.title && (
             <p className="text-center text-red-500">
               {errors.title.message as ReactNode}
             </p>
           )}
-          <textarea placeholder="Description" {...register("description")} />
+          <textarea
+            placeholder="Description"
+            {...register("description")}
+            onChange={(e) => {
+              if (typeof window !== "undefined") {
+                localStorage.setItem("collectionDescription", e.target.value);
+              }
+              register("description").onChange(e);
+            }}
+          />
           <BookSearch
             addToCollection={(bookData: BookProps) => {
               if (!bookData) return;
@@ -87,6 +117,11 @@ export const AddCollection: NextPage = () => {
                 if (selectedBooks.find((b) => b.id === bookData.id)) return; // Book already added
               clearErrors("books");
               setSelectedBooks([...selectedBooks, bookData]);
+              if (typeof window !== "undefined")
+                window.localStorage.setItem(
+                  "selectedBooks",
+                  JSON.stringify([...selectedBooks, bookData])
+                );
             }}
           />
           {errors.books && (
