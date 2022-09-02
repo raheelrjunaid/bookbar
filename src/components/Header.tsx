@@ -159,6 +159,7 @@ export const Header = () => {
               <input
                 type="text"
                 className="peer w-full border-0 border-b border-gray-600  py-1 pl-8 transition focus:ring-0"
+                autoFocus
                 placeholder="Search"
                 value={router.query.q ?? ""}
                 onChange={(e) => {
