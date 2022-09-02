@@ -34,7 +34,7 @@ model Collection {
 model Book {
   id          String       @id
   title       String
-  author      String
+  author      String?
   subtitle    String?      @db.Text
   cover_key   String?
   collections Collection[]

@@ -221,7 +221,7 @@ export default function Collection() {
               <Book
                 key={book.id}
                 id={book.id}
-                cover_key={book.cover_key}
+                cover_key={book.cover_key as string | undefined}
                 title={book.title}
                 author={book.author as string | undefined}
                 subtitle={book.subtitle as string | undefined}

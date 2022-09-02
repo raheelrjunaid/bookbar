@@ -75,7 +75,7 @@ export const CollectionCard = ({
               />
             </div>
             <a
-              href={book.link}
+              href={`https://openlibrary.org/works/${book.id}`}
               rel="noreferrer"
               target="_blank"
               className="absolute inset-0 flex items-center justify-center text-white opacity-0 transition group-hover:opacity-100"
