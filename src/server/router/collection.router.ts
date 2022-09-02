@@ -39,11 +39,7 @@ export const collectionRouter = createRouter()
         skip: (input.pageNumber - 1) * 9,
         take: 9,
         include: {
-          books: {
-            select: {
-              cover: true,
-            },
-          },
+          books: true,
           user: true,
         },
       });
@@ -87,11 +83,7 @@ export const collectionRouter = createRouter()
           },
         },
         include: {
-          books: {
-            select: {
-              cover: true,
-            },
-          },
+          books: true,
           user: true,
         },
       });
@@ -152,11 +144,7 @@ export const collectionRouter = createRouter()
           },
         },
         include: {
-          books: {
-            select: {
-              cover: true,
-            },
-          },
+          books: true,
           user: true,
         },
       });

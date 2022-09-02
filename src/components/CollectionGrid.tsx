@@ -1,4 +1,4 @@
-import { Collection, User } from "@prisma/client";
+import { Book, Collection, User } from "@prisma/client";
 import { useRouter } from "next/router";
 import { UseMutationResult } from "react-query";
 import { CollectionCard } from "./CollectionCard";
@@ -7,7 +7,7 @@ import Pagination from "./Pagination";
 interface CollectionGridProps {
   isLoading: boolean;
   collections?: (Collection & {
-    books: { cover: string | null }[];
+    books: Book[];
     user: User;
   })[];
   totalPages?: number;
@@ -37,7 +37,7 @@ export const CollectionGrid = ({
           collections?.map(({ id, title, user, books }) => (
             <CollectionCard
               key={id}
-              bookCovers={books.map(({ cover }) => cover)}
+              books={books}
               searchQuery={query}
               title={title}
               user={user}

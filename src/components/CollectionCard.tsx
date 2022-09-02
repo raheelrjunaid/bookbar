@@ -6,15 +6,14 @@ import HeartOutline from "../../public/heart-outline.svg";
 import HeartFilled from "../../public/heart-filled.svg";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Trash } from "tabler-icons-react";
+import { ExternalLink, Trash } from "tabler-icons-react";
 import Highlighter from "react-highlight-words";
 import cloudinary from "../utils/cloudinary";
 import { CollectionCardLoader } from "./loaders/CollectionCardLoader";
-import { User } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { Book, User } from "@prisma/client";
 
 interface CollectionCardProps {
-  bookCovers: (string | null)[];
+  books: Book[];
   searchQuery?: string;
   title: string;
   user: User;
@@ -23,7 +22,7 @@ interface CollectionCardProps {
 }
 
 export const CollectionCard = ({
-  bookCovers,
+  books,
   searchQuery,
   title,
   user,
@@ -33,24 +32,6 @@ export const CollectionCard = ({
   const { data: session } = useSession();
   const router = useRouter();
   const utils = trpc.useContext();
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const prefersReducedMotionQuery = window.matchMedia(
-      "(prefers-reduced-motion)"
-    ).matches;
-    setPrefersReducedMotion(prefersReducedMotionQuery);
-  }, []);
-
-  // Make sure all book covers exist
-  let newBookCovers = bookCovers.filter(
-    (cover) => typeof cover === "string"
-  ) as string[];
-  // Ensure book covers repeat to take up space (of 10 books)
-  if (bookCovers.length < 10)
-    Array.from({ length: 10 - newBookCovers.length }).forEach(
-      (_, index: number) => newBookCovers.push(newBookCovers[index] as string)
-    );
 
   const { data: isFavourited, status: favouriteStatus } = trpc.useQuery(
     ["collection.isFavourited", { collectionId }],
@@ -76,21 +57,37 @@ export const CollectionCard = ({
   });
 
   return (
-    <div className="relative flex flex-col border border-t-0 border-gray-200 shadow-lg shadow-gray-200">
+    <div className="relative flex flex-col border border-t-0 border-gray-200 shadow-md shadow-gray-100 transition hover:shadow-lg">
       <div className="relative flex overflow-x-hidden">
-        {newBookCovers.map((cover, index) => (
-          <div className="relative h-24 w-16 flex-none shadow-md" key={index}>
-            <Image
-              src={cover}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              alt={title}
-            />
+        {books.map((book, index) => (
+          <div className="group relative" key={index}>
+            <div className="relative h-24 w-16 flex-none cursor-pointer transition  group-hover:brightness-50">
+              <Image
+                src={book.cover || "/image-not-found"}
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                alt={title}
+              />
+            </div>
+            <a
+              href={book.link}
+              rel="noreferrer"
+              target="_blank"
+              className="absolute inset-0 flex items-center justify-center text-white opacity-0 transition group-hover:opacity-100"
+            >
+              <ExternalLink size={24} />
+            </a>
           </div>
         ))}
+        {Array.from({ length: 10 }).map((_, index) => (
+          <div
+            className="h-24 w-16 flex-none bg-gradient-to-tl from-gray-200"
+            key={index}
+          />
+        ))}
         <span className="absolute inset-y-0 right-0 z-10 flex items-center bg-gradient-to-l from-gray-800/70 to-gray-700/50 px-4 text-white backdrop-blur-sm">
-          {bookCovers.length} Book{bookCovers.length === 1 ? "" : "s"}
+          {books.length} Book{books.length === 1 ? "" : "s"}
         </span>
       </div>
       <div className="space-y-2 p-4">
