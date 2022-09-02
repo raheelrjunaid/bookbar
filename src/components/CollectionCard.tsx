@@ -1,4 +1,3 @@
-import Marquee from "react-fast-marquee";
 import { trpc } from "../utils/trpc";
 import Image from "next/image";
 import Rating from "./Rating";
@@ -78,7 +77,7 @@ export const CollectionCard = ({
 
   return (
     <div className="relative flex flex-col border border-t-0 border-gray-200 shadow-lg shadow-gray-200">
-      <Marquee gradientWidth={0} speed={prefersReducedMotion ? 0 : 20}>
+      <div className="relative flex overflow-x-hidden">
         {newBookCovers.map((cover, index) => (
           <div className="relative h-24 w-16 flex-none shadow-md" key={index}>
             <Image
@@ -90,10 +89,10 @@ export const CollectionCard = ({
             />
           </div>
         ))}
-      </Marquee>
-      <span className="absolute top-2 right-2 z-10 flex items-center rounded-full bg-gray-900/75 px-2.5 py-0.5 text-xs text-white shadow-md">
-        {bookCovers.length} Book{bookCovers.length === 1 ? "" : "s"}
-      </span>
+        <span className="absolute inset-y-0 right-0 z-10 flex items-center bg-gradient-to-l from-gray-800/70 to-gray-700/50 px-4 text-white backdrop-blur-sm">
+          {bookCovers.length} Book{bookCovers.length === 1 ? "" : "s"}
+        </span>
+      </div>
       <div className="space-y-2 p-4">
         <div className="flex items-center gap-3">
           <Link href={`/user/${user.slug}`}>
