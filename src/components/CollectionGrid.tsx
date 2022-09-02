@@ -1,10 +1,8 @@
 import { Collection, User } from "@prisma/client";
 import { useRouter } from "next/router";
 import { UseMutationResult } from "react-query";
-import Image from "next/image";
 import { CollectionCard } from "./CollectionCard";
 import Pagination from "./Pagination";
-import { Mailbox } from "tabler-icons-react";
 
 interface CollectionGridProps {
   isLoading: boolean;
@@ -30,7 +28,7 @@ export const CollectionGrid = ({
 
   return (
     <>
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {isLoading ? (
           Array.from({ length: 9 }).map((_, i) => (
             <CollectionCard.Loading key={i} />
@@ -49,7 +47,7 @@ export const CollectionGrid = ({
           ))
         ) : (
           <>
-            <h2 className="text-center text-gray-700 col-span-full">
+            <h2 className="col-span-full text-center text-gray-700">
               No collections found.
             </h2>
           </>
